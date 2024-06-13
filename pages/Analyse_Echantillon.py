@@ -29,7 +29,7 @@ def analyze_sample(data, expected_mean, alpha, population_std=None):
     st.divider()
     st.header("Résultats d'Analyse")
     # Check if all values are numerical
-    if not all(isinstance(x, float) for x in data):
+    if not all(isinstance(x, (int,float)) for x in data):
         st.error("Certaines valeurs dans les données ne sont pas numériques. Veuillez vérifier vos données!")
         st.stop()
     # Calculate statistics
