@@ -123,8 +123,10 @@ if data_choice == "Uploader un fichier":
     if uploaded_file is not None:
         if uploaded_file.name.endswith('.csv'):
             data = pd.read_csv(uploaded_file,header=None)
-            if data[0]==1: 
+            if data.shape[0]==1: 
                 data = data.T
+            else:
+                pass
             if data.shape[0]<30:
                 st.error("Le nombre d'observations doit être supérieur à 30 pour garantir la significativité de l'analyse en vertu du théorème central limite.")
                 st.stop()
@@ -138,8 +140,10 @@ if data_choice == "Uploader un fichier":
                 pass
         elif uploaded_file.name.endswith('.xlsx'):
             data = pd.read_excel(uploaded_file, engine='openpyxl',header=None)
-            if data[0]==1: 
+            if data.shape[0]==1: 
                 data = data.T
+            else:
+                pass
             if data.shape[0]<30:
                 st.error("Le nombre d'observations doit être supérieur à 30 pour garantir la significativité de l'analyse en vertu du théorème central limite.")
                 st.stop()
