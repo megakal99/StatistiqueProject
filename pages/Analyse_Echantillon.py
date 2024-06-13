@@ -29,8 +29,8 @@ def analyze_sample(data, expected_mean, alpha, population_std=None):
     st.divider()
     st.header("Résultats d'Analyse")
     # Check if all values are numerical
-    if not all(isinstance(x, (int,float)) for x in data):
-        st.error("Certaines valeurs dans les données ne sont pas numériques. Veuillez vérifier vos données!")
+    if not all(isinstance(x, float) for x in data):
+        st.error("Certaines valeurs dans les données ne sont pas des nombres réels (le jeu de données doit être une variable quantitative continue). Veuillez vérifier vos données!")
         st.stop()
     # Calculate statistics
     mean = np.mean(data)
@@ -88,8 +88,8 @@ def plot_distribution(data):
     st.divider()
     st.header("Visualisation")
     # Vérifier si toutes les valeurs sont numériques
-    if not all(isinstance(x, (int, float)) for x in data):
-        st.error("Certaines valeurs dans les données ne sont pas numériques. Veuillez vérifier vos données!")
+    if not all(isinstance(x, float) for x in data):
+        st.error("Certaines valeurs dans les données ne sont pas des nombres réels (le jeu de données doit être une variable quantitative continue). Veuillez vérifier vos données!")
         st.stop()
 
     # Tracer le graphique de distribution
