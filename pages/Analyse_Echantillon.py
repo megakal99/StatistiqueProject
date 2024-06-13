@@ -152,7 +152,7 @@ if data_choice == "Uploader un fichier":
             st.stop()
 
         # Convert DataFrame to numpy array (assuming one-dimensional data)
-        data = data.iloc[:, 0].value
+        data = data.iloc[:, 0].values
 elif data_choice == "Générer des données aléatoires":
     data_size = st.sidebar.number_input("Taille de l'échantillon", min_value=10, max_value=50000, value=100)
     data_mean = st.sidebar.number_input("Moyenne des données aléatoires", value=50.0)
