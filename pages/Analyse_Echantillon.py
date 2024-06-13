@@ -30,8 +30,7 @@ def analyze_sample(data, expected_mean, alpha, population_std=None):
     st.header("Résultats d'Analyse")
     # Check if all values are numerical
     if not all(isinstance(x, float) for x in data):
-        raise ValueError("All values in data must be numerical.")
-
+        raise ValueError("Certaines valeurs dans les données ne sont pas numériques. Veuillez vérifier vos données!")
     # Calculate statistics
     mean = np.mean(data)
     std_dev = np.std(data)
@@ -121,17 +120,39 @@ if data_choice == "Uploader un fichier":
     uploaded_file = st.sidebar.file_uploader("Uploader un fichier Excel ou CSV contenant les données", type=["xlsx", "csv"])
     if uploaded_file is not None:
         if uploaded_file.name.endswith('.csv'):
-            data = pd.read_csv(uploaded_file)
+            data = pd.read_csv(uploaded_file,header=None)
+            if data.shape[0]<30:
+                st.error("Le nombre d'observations doit être supérieur à 30 pour garantir la significativité de l'analyse en vertu du théorème central limite.")
+                st.stop()
+            elif data.shape[1] != 1:
+                st.error("Le nombre de variables (colonnes) est supérieur à 1. Cette analyse est unidimensionnelle. Veuillez utiliser un jeu de données contenant une seule variable numérique continue!")
+                st.stop()
+            elif data.isnull().sum().sum()>0:
+                st.error("Il y'a des valeurs manquantes à remplir ou à supprimer, Veuillez vérifier vos données!")
+                st.stop()
+            else:
+                pass
         elif uploaded_file.name.endswith('.xlsx'):
-            data = pd.read_excel(uploaded_file, engine='openpyxl')
+            data = pd.read_excel(uploaded_file, engine='openpyxl',header=None)
+            if data.shape[0]<30:
+                st.error("Le nombre d'observations doit être supérieur à 30 pour garantir la significativité de l'analyse en vertu du théorème central limite.")
+                st.stop()
+            elif data.shape[1] != 1:
+                st.error("Le nombre de variables (colonnes) est supérieur à 1. Cette analyse est unidimensionnelle. Veuillez utiliser un jeu de données contenant une seule variable numérique continue!")
+                st.stop()
+            elif data.isnull().sum().sum()>0:
+                st.error("Il y'a des valeurs manquantes à remplir ou à supprimer, Veuillez vérifier vos données!")
+                st.stop()
+            else: 
+                pass
         else:
             st.error("Le format de fichier n'est pas pris en charge.")
             st.stop()
 
         # Convert DataFrame to numpy array (assuming one-dimensional data)
-        data = data.iloc[:, 0].values
+        data = data.iloc[:, 0].value
 elif data_choice == "Générer des données aléatoires":
-    data_size = st.sidebar.number_input("Taille de l'échantillon", min_value=30, max_value=50000, value=100)
+    data_size = st.sidebar.number_input("Taille de l'échantillon", min_value=10, max_value=50000, value=100)
     data_mean = st.sidebar.number_input("Moyenne des données aléatoires", value=50.0)
     data_std = st.sidebar.number_input("Écart type des données aléatoires", value=10.0)
     data = np.random.normal(loc=data_mean, scale=data_std, size=data_size)
