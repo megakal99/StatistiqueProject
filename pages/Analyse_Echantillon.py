@@ -47,7 +47,7 @@ def analyze_sample(data, expected_mean, alpha, population_std=None):
         t_stat, p_value = stats.ttest_1samp(data, expected_mean)
         dof = len(data) - 1
         critical_value = stats.t.ppf(1 - alpha / 2, dof)
-        test_result = f"L'hypothèse nulle est rejetée, L'échantillon n'est pas répresentatif à >={(1-alpha)*100}% 😔" if abs(t_stat) > critical_value else "On ne peut pas rejeter l'hypothèse nulle H0, donc nous ne pouvons pas conclure que la moyenne de l'échantillon est significativement différente de la moyenne de la population. En d'autres termes, l'échantillon est significativement représentatif!!! ✅"
+        test_result = f"L'hypothèse nulle est rejetée, ce qui démontre de manière significative une différence entre la moyenne de l'échantillon et celle de la population. Ainsi, il est évident que l'échantillon n'est pas représentatif en termes de moyenne, avec une erreur de {p_value}% 😔" if p_value < alpha else "On ne peut pas rejeter l'hypothèse nulle H0, qui suggère que notre échantillon ne diffère pas de manière significative de la population étudiée. Ainsi, nous ne pouvons pas conclure que la moyenne de l'échantillon est significativement différente de la moyenne de la population. En d'autres termes, l'échantillon est représentatif en termes de moyenne!!! ✅"
     else:
         # Z-test
         z_stat, p_value = ztest(data, value=expected_mean, ddof=1)
