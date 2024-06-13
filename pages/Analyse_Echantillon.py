@@ -52,7 +52,7 @@ def analyze_sample(data, expected_mean, alpha, population_std=None):
         # Z-test
         z_stat, p_value = ztest(data, value=expected_mean, ddof=1)
         critical_value = stats.norm.ppf(1 - alpha / 2)
-        test_result = f"L'hypothèse nulle est rejetée, L'échantillon n'est pas répresentatif à {(1-alpha)*100}% 😔" if abs(z_stat) > critical_value else "On ne peut pas rejeter l'hypothèse nulle H0, donc nous ne pouvons pas conclure que la moyenne de l'échantillon est significativement différente de la moyenne de la population. En d'autres termes, l'échantillon est significativement représentatif!!! ✅"
+        test_result = f"L'hypothèse nulle est rejetée, L'échantillon n'est pas répresentatif à >={(1-alpha)*100}% 😔" if abs(z_stat) > critical_value else "On ne peut pas rejeter l'hypothèse nulle H0, donc nous ne pouvons pas conclure que la moyenne de l'échantillon est significativement différente de la moyenne de la population. En d'autres termes, l'échantillon est significativement représentatif!!! ✅"
 
     # Construct result dictionary
     result1 = {
