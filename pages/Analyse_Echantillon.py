@@ -30,7 +30,8 @@ def analyze_sample(data, expected_mean, alpha, population_std=None):
     st.header("Résultats d'Analyse")
     # Check if all values are numerical
     if not all(isinstance(x, float) for x in data):
-        raise ValueError("Certaines valeurs dans les données ne sont pas numériques. Veuillez vérifier vos données!")
+        st.error("Certaines valeurs dans les données ne sont pas numériques. Veuillez vérifier vos données!")
+        st.stop()
     # Calculate statistics
     mean = np.mean(data)
     std_dev = np.std(data)
@@ -88,7 +89,8 @@ def plot_distribution(data):
     st.header("Visualisation")
     # Vérifier si toutes les valeurs sont numériques
     if not all(isinstance(x, (int, float)) for x in data):
-        raise ValueError("Toutes les valeurs dans les données doivent être numériques.")
+        st.error("Certaines valeurs dans les données ne sont pas numériques. Veuillez vérifier vos données!")
+        st.stop()
 
     # Tracer le graphique de distribution
     plt.figure(figsize=(12, 6))
