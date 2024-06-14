@@ -172,7 +172,7 @@ if data_choice == "Uploader un fichier":
                 pass
             # Vérifier si les valeurs ne sont pas numériques
             #try:
-                pd.to_numeric(data.iloc[:, 0])
+                #pd.to_numeric(data.iloc[:, 0])
             #except Exception:
                 #st.error("Certaines valeurs dans les données ne sont pas des nombres (le jeu de données doit être une variable quantitative). Veuillez vérifier vos données!")
                 #st.stop()
