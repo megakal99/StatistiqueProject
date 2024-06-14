@@ -65,10 +65,6 @@ def analyze_sample(data, expected_mean, alpha, population_std=None):
     """
     st.divider()
     st.header("Résultats d'Analyse")
-    # Check if all values are numerical
-    if not all(isinstance(x, float) for x in data):
-        st.error("Certaines valeurs dans les données ne sont pas des nombres réels (le jeu de données doit être une variable quantitative continue). Veuillez vérifier vos données!")
-        st.stop()
     # Calculate statistics
     sample_size=data.shape[0]
     mean = np.mean(data)
@@ -128,11 +124,6 @@ def plot_distribution(data):
     """
     st.divider()
     st.header("Visualisation")
-    # Vérifier si toutes les valeurs sont numériques
-    if not all(isinstance(x, float) for x in data):
-        st.error("Certaines valeurs dans les données ne sont pas des nombres réels (le jeu de données doit être une variable quantitative continue). Veuillez vérifier vos données!")
-        st.stop()
-
     # Tracer le graphique de distribution
     plt.figure(figsize=(12, 6))
     plt.subplot(2, 2, 1)
@@ -179,6 +170,12 @@ if data_choice == "Uploader un fichier":
                 st.stop()
             else:
                 pass
+            # Vérifier si les valeurs ne sont pas numériques
+            try:
+                pd.to_numeric(data.iloc[:, 0])
+            except Exception:
+                st.error("Certaines valeurs dans les données ne sont pas des nombres (le jeu de données doit être une variable quantitative). Veuillez vérifier vos données!")
+                st.stop()
         elif uploaded_file.name.endswith('.xlsx'):
             data = pd.read_excel(uploaded_file, engine='openpyxl',header=None)
             if data.shape[0]==1: 
