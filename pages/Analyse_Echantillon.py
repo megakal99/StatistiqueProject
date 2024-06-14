@@ -171,11 +171,11 @@ if data_choice == "Uploader un fichier":
             else:
                 pass
             # Vérifier si les valeurs ne sont pas numériques
-            try:
+            #try:
                 pd.to_numeric(data.iloc[:, 0])
-            except Exception:
-                st.error("Certaines valeurs dans les données ne sont pas des nombres (le jeu de données doit être une variable quantitative). Veuillez vérifier vos données!")
-                st.stop()
+            #except Exception:
+                #st.error("Certaines valeurs dans les données ne sont pas des nombres (le jeu de données doit être une variable quantitative). Veuillez vérifier vos données!")
+                #st.stop()
         elif uploaded_file.name.endswith('.xlsx'):
             data = pd.read_excel(uploaded_file, engine='openpyxl',header=None)
             if data.shape[0]==1: 
