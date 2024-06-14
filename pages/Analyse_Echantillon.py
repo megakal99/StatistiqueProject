@@ -2,7 +2,6 @@ import streamlit as st
 import numpy as np
 from scipy import stats
 import pandas as pd
-from statsmodels.stats.weightstats import ztest 
 import matplotlib.pyplot as plt
 import seaborn as sns
 ###############################""
@@ -14,6 +13,44 @@ st.set_page_config(
 # Disable warning for Pyplot Global Use
 st.set_option('deprecation.showPyplotGlobalUse', False)
 ###################################
+def z_test(sample_mean, population_mean, population_std, sample_size, alpha=0.05):
+    """
+    Effectue un test z bilatéral pour comparer la moyenne de l'échantillon à la moyenne de la population.
+
+    Paramètres :
+
+    sample_mean : Moyenne de l'échantillon
+    population_mean : Moyenne de la population estimé ou réel
+    population_std : Écart type de la population
+    sample_size : Taille de l'échantillon
+    alpha : Niveau de significativité (par défaut, 0,05 pour un intervalle de confiance de 95 %)
+
+    Retourne :
+
+    z_statistic : Le statistique de test z
+    p_value : La valeur p associée au statistique de test z
+    ci_lower : Limite inférieure de l'intervalle de confiance
+    ci_upper : Limite supérieure de l'intervalle de confiance
+    """
+
+    # Calculate standard error
+    standard_error = population_std /(sample_size**0.5)
+
+    # Calculate z-test statistic
+    z_statistic = (sample_mean - population_mean) / standard_error
+
+    # Calculate p-value
+    p_value = 2 * (1 - norm.cdf(abs(z_statistic)))
+
+    # Calculate critical values
+    z_critical = norm.ppf(1 - alpha / 2)
+
+    # Calculate confidence interval
+    ci_lower = sample_mean - z_critical * standard_error
+    ci_upper = sample_mean + z_critical * standard_error
+
+    return z_statistic, p_value, ci_lower, ci_upper
+##########################################################################
 def analyze_sample(data, expected_mean, alpha, population_std=None):
     """
    Paramètres:
@@ -33,6 +70,7 @@ def analyze_sample(data, expected_mean, alpha, population_std=None):
         st.error("Certaines valeurs dans les données ne sont pas des nombres réels (le jeu de données doit être une variable quantitative continue). Veuillez vérifier vos données!")
         st.stop()
     # Calculate statistics
+    sample_size=data.shape[0]
     mean = np.mean(data)
     std_dev = np.std(data)
     median = np.median(data)
@@ -47,28 +85,31 @@ def analyze_sample(data, expected_mean, alpha, population_std=None):
         t_stat, p_value = stats.ttest_1samp(data, expected_mean)
         dof = len(data) - 1
         critical_value = stats.t.ppf(1 - alpha / 2, dof)
+        ci_lower = mean - critical_value * (std_dev/(sample_size**0.5))
+        ci_upper = mean + critical_value * (std_dev/(sample_size**0.5))
         test_result = f"L'hypothèse nulle est rejetée, ce qui démontre de manière significative une différence entre la moyenne de l'échantillon et celle de la population. Ainsi, il est évident que l'échantillon n'est pas représentatif en termes de moyenne, avec une erreur de {p_value}% 😔" if p_value < alpha else "On ne peut pas rejeter l'hypothèse nulle H0, qui suggère que notre échantillon ne diffère pas de manière significative de la population étudiée. Ainsi, nous ne pouvons pas conclure que la moyenne de l'échantillon est significativement différente de la moyenne de la population. En d'autres termes, l'échantillon est représentatif en termes de moyenne!!! ✅"
     else:
         # Z-test
-        z_stat, p_value = ztest(data, value=expected_mean, ddof=1)
-        critical_value = stats.norm.ppf(1 - alpha / 2)
+        z_statistic, p_value, ci_lower, ci_upper = z_test(mean, expected_mean, population_std, sample_size, alpha)
         test_result = f"L'hypothèse nulle est rejetée, ce qui démontre de manière significative une différence entre la moyenne de l'échantillon et celle de la population. Ainsi, il est évident que l'échantillon n'est pas représentatif en termes de moyenne, avec une erreur de {p_value}% 😔" if p_value < alpha else "On ne peut pas rejeter l'hypothèse nulle H0, qui suggère que notre échantillon ne diffère pas de manière significative de la population étudiée. Ainsi, nous ne pouvons pas conclure que la moyenne de l'échantillon est significativement différente de la moyenne de la population. En d'autres termes, l'échantillon est représentatif en termes de moyenne!!! ✅"
-
+        critical_value = stats.norm.ppf(1 - alpha / 2)
     # Construct result dictionary
     result1 = {
-        "mean": [mean],
-        "std_dev": [std_dev],
-        "median": [median],
-        "percentile_25": [percentile_25],
-        "percentile_75": [percentile_75],
-        "max": [max_val],
-        "min": [min_val]
+        "Nbr de l'obseravtions dans l'échantillon":[sample_size],
+        "moyenne de l'échantillon": [mean],
+        "Ecart-Type de l'échantillon": [std_dev],
+        "median de l'échantillon": [median],
+        "percentile_25 de l'échantillon": [percentile_25],
+        "percentile_75 de l'échantillon": [percentile_75],
+        "max de l'échantillon": [max_val],
+        "min de l'échantillon": [min_val]
     }
     result2={
             "test_statistic": [t_stat] if population_std is None else [z_stat],
             "p_value": [p_value],
             "alpha": [alpha],
             "critical_value": [critical_value],
+            "interval de confiance":[f"[{ci_lower},{ci_upper}]"],
             "test_result": [test_result]
         }
     result1=pd.DataFrame(result1)
