@@ -66,7 +66,7 @@ def analyze_sample(data, expected_mean, alpha, population_std=None):
     st.divider()
     st.header("Résultats d'Analyse")
     # Calculate statistics
-    sample_size=data.shape[0]
+    sample_size=len(data)
     mean = np.mean(data)
     std_dev = np.std(data)
     median = np.median(data)
