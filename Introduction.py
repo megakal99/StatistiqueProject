@@ -6,72 +6,87 @@ st.set_page_config(
 )
 
 ##########################################
-st.title("Introduction et Explication💡")
-st.markdown(
-    """
-    ### Introduction à la Validation d'Échantillon
+st.title('Guide pour évaluer la représentativité d\'un échantillon💡')
 
-    Dans cette section, nous allons explorer l'importance d'un échantillon de taille 
-    statistiquement significative, les méthodes de sélection appropriées, les tests 
-    d'hypothèses pour comparer statistiqement la moyenne d'échantillon avec la moyenne 
-    de population ou une moyenne théorique.
+    st.header('Introduction Générale')
+    st.markdown("""
+    Cette application vise à vérifier si un échantillon représente correctement une population donnée. Elle est structurée en trois parties, chacune adaptée à différents types d'échantillons que vous pourriez rencontrer.
+    """)
 
-    ### Méthodes de Sélection de l'Échantillon :
+    st.header('Section d\'Analyse d\'Échantillon Unidimensionnel (Variable Quantitative)')
+    st.markdown("""
+    Cette section est utile lorsque votre échantillon ne contient qu'une seule mesure quantitative, comme le salaire. Elle vous permet de déterminer si la moyenne de votre échantillon est similaire à celle de la population.
+    """)
 
-    Les méthodes de sélection de l'échantillon jouent un rôle crucial dans sa 
-    représentativité. Nous utilisons des méthodes de sélection aléatoires, stratifiées 
-    ou systématiques pour garantir que chaque membre de la population ait une chance 
-    égale d'être inclus dans l'échantillon. Cela réduit les biais potentiels et 
-    améliore la fiabilité des résultats.
+    st.header('Section d\'Analyse d\'Échantillon Unidimensionnel Binaire')
+    st.markdown("""
+    Utilisez cette section si votre échantillon comprend une seule caractéristique binaire, comme Vrai/Faux ou Femme/Homme. Elle permet de vérifier si la proportion dans votre échantillon est proche de celle attendue dans la population.
+    """)
 
-    1.Sélection Aléatoire : Chaque membre de la population a une chance égale d'être 
-    inclus dans l'échantillon. Cela réduit les biais potentiels et garantit une représentation
-    aléatoire de la population. 
-    Des techniques telles que la sélection aléatoire simple, où chaque individu a la même 
-    probabilité d'être choisi, ou la sélection aléatoire en grappes, où des groupes 
-    d'individus sont sélectionnés de manière aléatoire, peuvent être utilisées.
+    st.header('Informations Nécessaires pour l\'Analyse')
+    st.markdown("""
+    vbnet
 
-    2.Stratification : La population est divisée en sous-groupes homogènes appelés strates, 
-    puis un échantillon aléatoire est sélectionné à partir de chaque strate. 
-    Cette méthode est utilisée pour capturer la variabilité dans la population et garantir 
-    une représentation adéquate des caractéristiques importantes. Les techniques 
-    de clustering sur la population peuvent être utilisées pour identifier ces strates 
-    de manière efficace.
+    Moyenne (ou Proportion) Attendue :
+        Pour l'échantillon binaire, il s'agit simplement de la proportion attendue d'une valeur spécifique dans la population. Par exemple, si vous estimez que 60% des individus dans la population sont des femmes, vous entrez cette proportion (60%) dans l'application pour la comparer à ce que vous observez dans votre échantillon.
+        Pour les échantillons quantitatifs, il s'agit de la moyenne que vous attendez de trouver dans la population.
 
-    3.Sélection Systématique : Dans cette méthode, un membre de la population est sélectionné 
-    à intervalles réguliers après avoir choisi un point de départ aléatoire. Par exemple, si 
-    nous voulons un échantillon de 100 personnes à partir d'une population de 1000, nous pouvons 
-    sélectionner chaque 10e individu après un point de départ aléatoire. Cette méthode est 
-    simple à mettre en œuvre et peut être utilisée lorsque la liste de la population est ordonnée 
-    d'une manière ou d'une autre.
+    Seuil de Significativité (α) :
+        C'est le niveau de confiance que vous souhaitez avoir dans votre conclusion. Les choix courants sont 1%, 5% ou 10%. Un niveau de 5% est souvent utilisé pour des décisions pratiques.
+        Pour le seuil de significativité alpha, il est généralement facultatif dans notre application, mais par défaut, nous utilisons 5%, ce qui est recommandé pour la plupart des analyses statistiques.
 
-    ### Tests d'Hypothèses :
+    Interprétation des Résultats :
+        Hypothèse Nulle (H₀) : L'échantillon est représentatif de la population (la moyenne de l'échantillon n'est pas statistiquement différente de celle de la population).
+        Hypothèse Alternative (H₁) : L'échantillon diffère de la population.
+        Si la p-value est inférieure à votre seuil α choisi, cela suggère une différence significative entre l'échantillon et la population.
 
-    Les tests d'hypothèses sont utilisés pour comparer les moyennes d'un échantillon à la moyenne 
-    d'une population ou à une moyenne théorique basée sur l'expertise métier ou les données historiques. 
-    Par exemple, nous pouvons utiliser le test Z dans le cas où nous avons une distribution normale 
-    ou un échantillon de taille supérieure à 30 (utilisation du théorème de la limite centrale) et 
-    lorsque l'écart type de la population est connu. En revanche, si l'écart type de la population 
-    est inconnu, nous utilisons le test T de Student comme alternative. Tous ces tests sont valides 
-    pour un échantillon unidimensionnel avec une variable numérique continue.
+    Écart-type ou Dispersion (Facultatif) :
+        Si vous disposez de cette information pour la population, elle peut améliorer la précision de votre analyse par l'utilisation du z-test. Cependant, ce n'est pas obligatoire.
+    """)
 
-    ### Signification de l'Alpha :
+    st.header('Conseils')
+    st.markdown("""
+    rust
 
-    L'alpha, souvent désigné par le symbole α, est le niveau de signification statistique choisi 
-    pour un test. Il représente la probabilité de rejeter à tort l'hypothèse nulle (H0) 
-    (dans notre cas, que les deux moyennes sont égales, ce qui indiquerait que l'échantillon est 
-    statistiquement représentatif) lorsque celle-ci est en fait vraie. Un niveau de signification 
-    communément utilisé est α = 0,05, ce qui signifie qu'il y a 5 % de chances de commettre une erreur 
-    de type I en rejetant à tort l'hypothèse nulle. Utiliser un niveau de signification de 0 % serait 
-    problématique, car cela supposerait une certitude absolue dans les résultats du test, 
-    ce qui n'est pas réaliste dans la pratique.
+    *Avant de commencer, assurez-vous d'avoir la moyenne attendue (ou la proportion).
+    *La p-value vous aide à décider si votre échantillon est vraiment représentatif de la population ou s'il y a une différence significative. Elle indique la probabilité d'erreur de type I, c'est-à-dire le risque de rejeter à tort l'hypothèse nulle.
+    """)
 
-En résumé, nous utilisons un échantillon de taille statistiquement significative, 
-sélectionné à l'aide de la méthode aléatoire, pour effectuer des tests d'hypothèses 
-et évaluer la signification des résultats en fonction de l'alpha choisi. Cette approche garantit 
-des conclusions fiables et représentatives, essentielles pour prendre des décisions éclairées 
-dans divers domaines d'application.
+    st.header('Analyse Multidimensionnelle pour la Validation de l\'Échantillon')
 
-"""
-)
+    st.subheader('Test Paramétrique Multivarié (Hotteling Test)')
+    st.markdown("""
+    Nous commençons par un test paramétrique multivarié des variables quantitatives de l'échantillon pour évaluer leur représentativité.
+    """)
+
+    st.subheader('Approche de l\'Analyse en Composantes Principales (ACP)')
+    st.markdown("""
+    En cas de non-validation des conditions du test paramétrique, nous utilisons une approche basée sur l'Analyse en Composantes Principales (ACP).
+    """)
+
+    st.subheader('Analyse de Dépendance entre Variables Qualitatives et Quantitatives (Test de Kruskal)')
+    st.markdown("""
+    Pour analyser la dépendance ou l'indépendance entre les variables qualitatives et les variables quantitatives, nous utilisons un test de Kruskal-Wallis (similaire à une ANOVA non paramétrique).
+    """)
+
+    st.subheader('Analyse de Dépendance entre Variables Qualitatives (Test du Chi carré)')
+    st.markdown("""
+    Enfin, nous utilisons un test du Chi carré pour évaluer la dépendance ou l'indépendance entre les différentes modalités des variables qualitatives dans l'échantillon.
+    """)
+
+    st.header('Remarques et Conseils')
+    st.markdown("""
+    *Lors de l'analyse d'un échantillon contenant une variable cible spécifique (par exemple, étudier la capacité de remboursement de crédits bancaires), nous pouvons utiliser une approche unidimensionnelle si cette variable est binaire ou quantitative, avec une moyenne ou une proportion représentative de la population.
+    * Le vecteur de moyenne attendu est fortement recommandé mais non obligatoire ; il indique la moyenne de chaque variable quantitative dans la population, suggérée sur la base de données d'archives, d'expertise métier ou de pratiques courantes.
+    * Alpha (par défaut à 5%).
+    * Il est préférable d'utiliser un échantillon de taille supérieure à 2000.
+    * Il est impératif de s'assurer qu'il n'y a pas de valeurs manquantes ni de duplications parmi les observations de l'échantillon.
+    * Si votre échantillon inclut une variable cible qui représente toutes les variables, veuillez utiliser un test unidimensionnel binaire ou simple, selon le type de variable (binaire ou quantitative).
+    * Il est obligatoire de supprimer toutes les caractéristiques ou variables qui sont utilisées uniquement pour identifier l'observation, par exemple le numéro de dossier, etc.
+    """)
+
+    st.header('Conclusion')
+    st.markdown("""
+    Notre application simplifie l'évaluation de la représentativité de vos échantillons par rapport à une population. En suivant ces étapes simples et en comprenant les résultats, vous pouvez prendre des décisions éclairées fondées sur des analyses statistiques rigoureuses.
+    """)
 
