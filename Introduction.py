@@ -94,7 +94,7 @@ st.markdown("""
     
 st.header('Remarques et Conseils')
 st.markdown("""
-    ● Lors de l'analyse d'un échantillon contenant une variable cible spécifique (par exemple, étudier la capacité de remboursement de crédits bancaires), nous pouvons utiliser une approche unidimensionnelle si cette variable est binaire ou quantitative, avec une moyenne ou une proportion représentative de la population.
+    ● Lors de l'analyse d'un échantillon contenant une variable cible spécifique (par exemple, étudier la capacité de remboursement de crédits bancaires), nous pouvons utiliser une approche unidimensionnelle si cette variable est binaire ou quantitative.
     
     ● Le vecteur de moyenne attendu est fortement recommandé mais non obligatoire ; il indique la moyenne de chaque variable quantitative dans la population, suggérée sur la base de données d'archives, d'expertise métier ou de pratiques courantes.
     
