@@ -42,10 +42,10 @@ def validate_data_quality():
     # Check if the unique values are 0 and 1
     sample_size=data.shape[0]
     check=HandleBinaryCategVariable(data)
-    if check==0:
+    if check==1:
         mean_sample = data.mean()[0]
     else:
-        mean_sample=data[data.iloc[:,0]==success_value].count()[0]/sample_size
+        st.stop()
 ###################################"####################################"
 def generate_binary_dataframe(size):
     """
@@ -59,7 +59,6 @@ def generate_binary_dataframe(size):
     """
     return pd.DataFrame(np.random.randint(0, 2, size=size), columns=['binary_column'])
 ########################################################################
-success_value=None
 def HandleBinaryCategVariable(data):
     """
     Gérer le cas d'une variable catégorielle avec deux modalités (binaire), dans un jeu de données unidimensionnel.
@@ -68,17 +67,15 @@ def HandleBinaryCategVariable(data):
     Retourne :
     checker(int) : 1: la variable est numérique binaire (0,1) / 0: la variable est catégorielle avec deux modalités
     """
-    global success_value
-    checker=0
+    checker=1
     unique_values = set(data.iloc[:,0].unique())
     # Check if the unique values are 0 and 1
     if unique_values == {0, 1}:
         pass
     else:
         values =list(unique_values)
-        st.warning("Les données ne semblent pas être directement binaires (0 et 1), mais plutôt modalités, comme par exemple 'Marié/Non Marié' ou 'Vrai/Faux', etc.")
-        success_value = st.selectbox("Veuillez indiquer quelle valeur dans vos données représente le succès :", options=values)
-        checker=1
+        st.warning("Les données ne semblent pas être directement binaires (0 et 1), mais plutôt modalités, comme par exemple 'Marié/Non Marié' ou 'Vrai/Faux', etc. veuillez les changer par 0 et 1")
+        checker=0
    
     return checker
 ############################################################################
