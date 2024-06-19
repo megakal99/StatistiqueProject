@@ -13,7 +13,7 @@ st.set_page_config(
 # Disable warning for Pyplot Global Use
 st.set_option('deprecation.showPyplotGlobalUse', False)
 ############################################
-def validateDataQuality(data):
+def validateDataQuality():
     global data
     if data.shape[0]==1: 
         data = data.T
