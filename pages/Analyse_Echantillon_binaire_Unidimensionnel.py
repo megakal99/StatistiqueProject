@@ -177,7 +177,7 @@ data_choice = st.sidebar.selectbox("Source des données", ("Uploader un fichier"
 if data_choice == "Uploader un fichier":
     uploaded_file = st.sidebar.file_uploader("Uploader un fichier Excel ou CSV contenant les données", type=["xlsx", "csv"])
     if uploaded_file is not None:
-        if uploaded_file.name.endswith('.csv'):
+        if uploaded_file.name.endswith('.csv',header=None):
             data = pd.read_csv(uploaded_file)
             validate_data_quality()
             
