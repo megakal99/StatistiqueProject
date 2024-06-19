@@ -6,7 +6,7 @@ import seaborn as sns
 import numpy as np
 #################################
 st.set_page_config(
-    page_title="CheckSample2",
+    page_title="CheckSampleUnidBinary",
     page_icon="static/ico.png",  
 )
 
