@@ -117,7 +117,8 @@ st.markdown("""
     ● Si vous avez des données au format CSV, assurez-vous que les valeurs sont séparées uniquement par des virgules et qu'il n'y a pas d'en-tête - juste les valeurs. Pour les fichiers Excel, les données doivent avoir un en-tête indiquant le nom des variables. Cela est particulièrement important pour l'analyse unidimensionnelle.
 
     ● Pour l'analyse multidimensionnelle, pour les fichiers CSV, vérifiez que les valeurs sont également séparées par des virgules et que la première ligne contient un en-tête avec les noms des variables - également séparés par des virgules. Pour les fichiers Excel, les données doivent avoir un en-tête indiquant les noms des variables. Tout cela est essentiel pour assurer le bon fonctionnement des tests sans erreurs.
-    
+
+    ● Dans le cas d'une analyse multidimensionnelle, les tests par défaut sont lancés avec des paramètres prédéfinis qui ne reflètent pas l'échantillon après le téléchargement des données ou la génération de données aléatoires. Il est donc nécessaire de saisir les paramètres correspondants pour retester et obtenir des résultats statistiques robustes qui reflètent l'échantillon.
     
     """)
 
