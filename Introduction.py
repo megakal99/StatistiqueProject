@@ -113,6 +113,12 @@ st.markdown("""
       Imaginez que nous étudions la moyenne des salaires dans une entreprise par rapport à la moyenne des salaires dans toute l'industrie. Si nous trouvons que la moyenne des salaires dans notre échantillon est de 50 000 euros avec un intervalle de confiance de 95%, cela signifie que nous sommes confiants à 95% que la vraie moyenne des salaires dans l'industrie se situe quelque part entre, par exemple, 48 000 et 52 000 euros.
 
       Cet intervalle de confiance nous permet de prendre en compte la variabilité naturelle des données d'échantillon et nous aide à décider si notre échantillon est suffisamment représentatif de la population plus large. Plus l'intervalle de confiance est étroit, plus notre estimation est précise et plus nous pouvons être confiants dans la représentativité de notre échantillon.
+    
+    ● Si vous avez des données au format CSV, assurez-vous que les valeurs sont séparées uniquement par des virgules et qu'il n'y a pas d'en-tête - juste les valeurs. Pour les fichiers Excel, les données doivent avoir un en-tête indiquant le nom des variables. Cela est particulièrement important pour l'analyse unidimensionnelle.
+
+    ● Pour l'analyse multidimensionnelle, pour les fichiers CSV, vérifiez que les valeurs sont également séparées par des virgules et que la première ligne contient un en-tête avec les noms des variables - également séparés par des virgules. Pour les fichiers Excel, les données doivent avoir un en-tête indiquant les noms des variables. Tout cela est essentiel pour assurer le bon fonctionnement des tests sans erreurs.
+    
+    
     """)
 
 st.header('Conclusion')
