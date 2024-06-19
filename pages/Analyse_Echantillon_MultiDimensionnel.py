@@ -10,7 +10,7 @@ from sklearn.decomposition import PCA
 import random,itertools
 ###############################""
 st.set_page_config(
-    page_title="CheckSample3",
+    page_title="CheckSampleMultiDim",
     page_icon="static/ico.png",  
 )
 
