@@ -198,7 +198,7 @@ def ACP(X):
         X (pd.DataFrame): Le DataFrame contenant les données numériques à analyser.
 
     Returns:
-        float: La variance expliquée par le premier composant principal.
+        str: Pourcentage de la variance expliquée par le premier composant principal.
         float: La contribution maximale d'une variable au premier composant principal.
         str: Le nom de la variable ayant la plus grande contribution au premier composant principal.
     """
@@ -225,7 +225,7 @@ def ACP(X):
     max_contribution = abs(loadings_df).max(axis=0)[0]
     TopRepresentativeVariable = abs(loadings_df).idxmax(axis=0)[0]
 
-    return round(explained_variance[0],2)*100, max_contribution, TopRepresentativeVariable
+    return f'{round(explained_variance[0],2)*100}%', max_contribution, TopRepresentativeVariable
 #######################################################################
 def NaiveRepresentativenessByMeanTest(X, TopRepresentativeVariable, expected_mean, alpha):
     """
