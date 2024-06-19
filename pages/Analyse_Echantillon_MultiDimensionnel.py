@@ -386,6 +386,7 @@ def descriptive_statistics(X, nbrQvar, nbrCvar):
     if nbrCvar > 0:
         # Categorical variables
         categorical_cols = st.session_state.Cvars
+        X[categorical_cols] = X[categorical_cols].astype(str)
         categorical_stats = X[categorical_cols].apply(lambda x: x.value_counts(normalize=True)).fillna(0)
         # Créer un dictionnaire pour stocker toutes les statistiques
         statistics['Variables Catégorielles'] = categorical_stats.to_dict()
