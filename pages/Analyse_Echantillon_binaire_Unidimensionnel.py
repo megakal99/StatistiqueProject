@@ -196,7 +196,7 @@ elif data_choice == "Générer des données aléatoires":
     data=generate_binary_dataframe((data_size,1))
     validate_data_quality(data)
 
-expected_mean = st.sidebar.number_input("Moyenne (proportion) attendue de la population", min_value=0.01, max_value=1.0, value=0.5)
+expected_mean = st.sidebar.number_input("Moyenne (proportion) attendue de la population", min_value=0.01, max_value=1.0, value=None)
 alpha = st.sidebar.slider("Niveau de signification (alpha)", min_value=0.01, max_value=0.10, value=0.05, step=0.01)
 
 button=st.sidebar.button('Analyser')
