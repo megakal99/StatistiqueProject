@@ -70,7 +70,8 @@ st.markdown("""
 
 st.subheader('Approche de l\'Analyse en Composantes Principales (ACP)')
 st.markdown("""
-    En cas de non-validation des conditions du test paramétrique, nous utilisons une approche basée sur l'Analyse en Composantes Principales (ACP).
+    
+En cas de non-validation des conditions du test paramétrique, nous utilisons une approche basée sur l'Analyse en Composantes Principales (ACP), qui repose sur la corrélation entre les variables quantitatives, pour explorer la structure des données multidimensionnelles. L'ACP permet de réduire la dimensionnalité en identifiant les composantes principales (dans notre cas, une seule composante) qui reflètent le mieux la variabilité dans l'échantillon. Nous sélectionnons ensuite la variable qui contribue le plus à la construction de cette composante principale issue de l'ACP. Cela nous aide à comparer sa moyenne avec celle attendue dans la population, en supposant que cette variable reflète au mieux toutes les variables quantitatives.
     """)
 
 st.subheader('Analyse de Dépendance entre Variables Qualitatives et Quantitatives (Test de Kruskal)')
