@@ -23,7 +23,6 @@ p=0.5
 ## Estimation de la taille d'échantillon en général dans le cas plus rare
 estimated_sample_size=int((1.96**2)*p*(1-p)/(0.05**2))
 ################################
-@st.cache
 def generate_multidimensional_data(size, nbrQvar, nbrCvar):
     """
     Génère des données multidimensionnelles pour les tests statistiques.
@@ -63,7 +62,6 @@ def generate_multidimensional_data(size, nbrQvar, nbrCvar):
     
     return data, vectAverage
 #################################
-@st.cache
 def validateData(X):
     """
     Valide les données en vérifiant plusieurs critères pour garantir leur adéquation à l'analyse statistique.
@@ -92,7 +90,6 @@ def validateData(X):
 
     
 ############################################""
-@st.cache
 def Handle_groupingSampleBoxMTest(X):
     """
     Prépare les données groupées pour un test de boîte M multidimensionnel.
@@ -125,7 +122,6 @@ def Handle_groupingSampleBoxMTest(X):
     df = pd.DataFrame(data)
     return df
 #######################################################
-@st.cache
 def validate_hotellingTest_conditions(X):
     """
     Naive Approach!!!
@@ -151,7 +147,6 @@ def validate_hotellingTest_conditions(X):
     else:
         return False 
 #################################################################""
-@st.cache
 def tttestmultivariate(X, null_hypothesis_means,alpha):
     """
     Effectue le test T2 de Hotelling en utilisant la bibliothèque pingouin.
@@ -195,7 +190,6 @@ def tttestmultivariate(X, null_hypothesis_means,alpha):
     return results
     
 #######################################################################
-@st.cache
 def ACP(X):
     """
     Effectue une Analyse en Composantes Principales (ACP) sur un ensemble de données X.
@@ -233,7 +227,6 @@ def ACP(X):
 
     return explained_variance, max_contribution, TopRepresentativeVariable
 #######################################################################
-@st.cache
 def NaiveRepresentativenessByMeanTest(X, TopRepresentativeVariable, expected_mean, alpha):
     """
     Effectue un test de comparaison de moyenne (t-test) pour évaluer la représentativité naïve d'un échantillon.
@@ -271,7 +264,6 @@ def NaiveRepresentativenessByMeanTest(X, TopRepresentativeVariable, expected_mea
 
     return results
 ############################################################################
-@st.cache
 def NonParametricAnova(X, alpha, ListofPairs):
     """
     Effectue un test ANOVA non paramétrique (test de Kruskal-Wallis) pour évaluer l'indépendance entre des paires de variables.
@@ -303,7 +295,6 @@ def NonParametricAnova(X, alpha, ListofPairs):
     
     return check
 ####################################################################################################
-@st.cache
 def ChiSquareTestForCategVar(X, alpha, ListofPairs):
     """
     Effectue un test du chi-deux pour évaluer l'indépendance entre des paires de variables catégorielles.
@@ -335,7 +326,6 @@ def ChiSquareTestForCategVar(X, alpha, ListofPairs):
 
     return check
 ###############################################################
-@st.cache
 def definePossibleCases(data):
     """
     Définit les variables quantitatives et qualitatives à partir d'un DataFrame de données.
@@ -359,7 +349,6 @@ def definePossibleCases(data):
     
     return len(numeric_columnsList), len(Categorical_variables)
 ###############################################################
-@st.cache
 def descriptive_statistics(X, nbrQvar, nbrCvar):
     """
     Calcule les statistiques descriptives pour les variables quantitatives et qualitatives d'un DataFrame.
@@ -406,7 +395,6 @@ def descriptive_statistics(X, nbrQvar, nbrCvar):
         st.table(pd.DataFrame(statistics['Variables Catégorielles']))
 
 #############################################################
-@st.cache
 def displayCorrMatrix(X, nbrQvar):
     """
     Affiche une matrice de corrélation pour les variables quantitatives spécifiées.
@@ -435,7 +423,6 @@ def displayCorrMatrix(X, nbrQvar):
         # Afficher le graphique dans Streamlit
         st.pyplot()
 ##########################################################################
-@st.cache
 def DispalyStats(X,nbrQvar,nbrCvar):
     """
     Affiche les statistiques descriptives, la matrice de corrélation et les résultats d'analyse.
@@ -459,7 +446,6 @@ def DispalyStats(X,nbrQvar,nbrCvar):
     st.header("Résultats d'Analyse")
     HandlePossibleCases(X)
 ##############################################################
-@st.cache
 def get_pairs(aux):
     """
     Génère des paires de variables en fonction du paramètre `aux`.
@@ -483,7 +469,6 @@ def get_pairs(aux):
         return pairs
     
 ##############################################################
-@st.cache
 def HandlePossibleCases(data):
     nbrQvar,nbrCvar=len(st.session_state.Qvars),len(st.session_state.Cvars)
     if nbrQvar==0 and nbrCvar>=2:
