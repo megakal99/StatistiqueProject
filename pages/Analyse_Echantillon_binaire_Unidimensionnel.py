@@ -15,8 +15,8 @@ st.set_option('deprecation.showPyplotGlobalUse', False)
 ###################################################""
 mean_sample=None
 sample_size=None
-def validate_data_quality(data):
-    global mean_sample,sample_size 
+def validate_data_quality():
+    global data,mean_sample,sample_size 
     if data.shape[0]==1: 
         data = data.T
     else:
