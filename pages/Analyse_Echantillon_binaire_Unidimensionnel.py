@@ -179,11 +179,11 @@ if data_choice == "Uploader un fichier":
     if uploaded_file is not None:
         if uploaded_file.name.endswith('.csv'):
             data = pd.read_csv(uploaded_file)
-            validate_data_quality(data)
+            validate_data_quality()
             
         elif uploaded_file.name.endswith('.xlsx'):
             data = pd.read_excel(uploaded_file, engine='openpyxl')
-            validate_data_quality(data)
+            validate_data_quality()
         else:
             st.error("Le format de fichier n'est pas pris en charge.")
             st.stop()
@@ -191,7 +191,7 @@ if data_choice == "Uploader un fichier":
 elif data_choice == "Générer des données aléatoires":
     data_size = st.sidebar.number_input("Taille de l'échantillon", min_value=30, max_value=50000, value=100)
     data=generate_binary_dataframe((data_size,1))
-    validate_data_quality(data)
+    validate_data_quality()
 
 expected_mean = st.sidebar.number_input("Moyenne (proportion) attendue de la population", min_value=0.01, max_value=1.0, value=None)
 alpha = st.sidebar.slider("Niveau de signification (alpha)", min_value=0.01, max_value=0.10, value=0.05, step=0.01)
