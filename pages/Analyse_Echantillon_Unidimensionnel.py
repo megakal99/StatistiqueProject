@@ -14,6 +14,7 @@ st.set_page_config(
 st.set_option('deprecation.showPyplotGlobalUse', False)
 ############################################
 def validateDataQuality(data):
+    global data
     if data.shape[0]==1: 
         data = data.T
     else:
