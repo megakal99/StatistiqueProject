@@ -225,7 +225,7 @@ def ACP(X):
     max_contribution = abs(loadings_df).max(axis=0)[0]
     TopRepresentativeVariable = abs(loadings_df).idxmax(axis=0)[0]
 
-    return explained_variance, max_contribution, TopRepresentativeVariable
+    return round(explained_variance[0],2)*100, max_contribution, TopRepresentativeVariable
 #######################################################################
 def NaiveRepresentativenessByMeanTest(X, TopRepresentativeVariable, expected_mean, alpha):
     """
