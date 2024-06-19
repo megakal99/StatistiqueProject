@@ -59,10 +59,13 @@ st.markdown("""
     """)
 
 st.header('Analyse Multidimensionnelle pour la Validation de l\'Échantillon')
-
+st.markdown("""Cette section est dédiée à l'analyse et à la validation de la représentativité d'un échantillon qui combine plusieurs caractéristiques (variables), incluant des variables quantitatives et/ou qualitatives. Nous suivons une approche structurée pour évaluer chaque type de caractéristique dans l'échantillon.""")
 st.subheader('Test Paramétrique Multivarié (Hotteling Test)')
 st.markdown("""
-    Nous commençons par un test paramétrique multivarié des variables quantitatives de l'échantillon pour évaluer leur représentativité.
+    Nous commençons par un test paramétrique multivarié des variables quantitatives de l'échantillon pour évaluer leur représentativité. Ce test compare le vecteur de moyennes des variables quantitatives de l'échantillon avec le vecteur de moyennes attendu dans la population. C'est similaire à un z-test ou t-test dans un cadre unidimensionnel. Avant de procéder à ce test, nous devons vérifier que les conditions requises sont remplies, notamment la normalité multivariée et l'homogénéité des matrices de covariance.
+
+    Si les conditions du test paramétrique sont validées, cela nous permet de procéder à ce test multivarié pour évaluer la représentativité de l'échantillon en termes de variables quantitatives.
+
     """)
 
 st.subheader('Approche de l\'Analyse en Composantes Principales (ACP)')
