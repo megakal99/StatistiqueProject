@@ -5,5 +5,5 @@ pandas
 statsmodels
 matplotlib
 seaborn
-sklearn
+scikit-learn
 itertools
