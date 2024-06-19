@@ -481,7 +481,7 @@ def HandlePossibleCases(data):
         checker=validate_hotellingTest_conditions(data)
         if checker:
             # Text input for the vector mean
-            st.write('Veuillez entrer les moyennes vectorielles attendues de la population, séparées par des virgules (recommandé, par exemple : 1, 2.7, 3, etc.)!')
+            st.write("Veuillez simplement entrer la moyenne vectorielle attendue de la population, séparée par des virgules (recommandé, par exemple : 1, 2.7, 3, etc.). Ignorez le deuxième formulaire si vous disposez déjà des données d'entrée (vecteur de moyennes). Sinon, il est nécessaire de saisir une valeur de base reflétant la moyenne réelle de la variable suggérée dans l'indication au-dessus du formulaire correspondant.")
             st.write("Le vecteur doit contenir un nombre d'éléments égal au nombre de variables quantitatives!")
             vector_mean_input = st.text_input('Vecteurs de moyennes attendu de la population')
             # Convert the input string to a list of floats
@@ -518,8 +518,8 @@ def HandlePossibleCases(data):
         selected_pairs_dep = get_pairs('combinaison des variables quantitaives /catégorielles')
         selected_pairs_depCateg = get_pairs('combinaison des variables catégorielles')
         if checker:
-            # Text input for the vector mean
-            st.write('Veuillez entrer les moyennes vectorielles attendues de la population, séparées par des virgules (recommandé, par exemple : 1, 2.7, 3, etc.)!')
+            # Text input for the vector mean            
+            st.write("Veuillez simplement entrer la moyenne vectorielle attendue de la population, séparée par des virgules (recommandé, par exemple : 1, 2.7, 3, etc.). Ignorez le deuxième formulaire si vous disposez déjà des données d'entrée (vecteur de moyennes). Sinon, il est nécessaire de saisir une valeur de base reflétant la moyenne réelle de la variable suggérée dans l'indication au-dessus du formulaire correspondant.")
             st.write("Le vecteur doit contenir un nombre d'éléments égal au nombre de variables quantitatives!")        
             vector_mean_input = st.text_input('Vecteurs de moyennes attendu de la population')
 
