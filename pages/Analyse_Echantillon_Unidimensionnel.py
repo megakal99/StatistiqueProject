@@ -206,7 +206,7 @@ elif data_choice == "Générer des données aléatoires":
     data_std = st.sidebar.number_input("Écart type des données aléatoires", value=10.0)
     data = np.random.normal(loc=data_mean, scale=data_std, size=data_size)
 
-expected_mean = st.sidebar.number_input("Moyenne attendue de la population", value=50.0)
+expected_mean = st.sidebar.number_input("Moyenne attendue de la population", value=None)
 alpha = st.sidebar.slider("Niveau de signification (alpha)", min_value=0.01, max_value=0.10, value=0.05, step=0.01)
 population_std = st.sidebar.number_input("Écart type de la population (facultatif)", value=None)
 
