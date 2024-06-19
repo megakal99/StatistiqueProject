@@ -121,7 +121,7 @@ st.markdown("""
     ● Dans le cas d'une analyse multidimensionnelle, les tests par défaut sont lancés avec des paramètres prédéfinis qui ne reflètent pas l'échantillon après le téléchargement des données ou la génération de données aléatoires. Il est donc nécessaire de saisir les paramètres correspondants pour retester et obtenir des résultats statistiques robustes qui reflètent l'échantillon.
     
     """)
-st.warning("Il est important d'utiliser un échantillon contenant au maximum 9000 observations afin d'éviter de surcharger le serveur. L'application stocke toutes les données en mémoire RAM pour assurer la confidentialité des données, celles-ci étant temporaires et supprimées à chaque rafraîchissement de page, sans enregistrement permanent sur le serveur. De plus, une analyse d'échantillon ne nécessite pas de données plus large.")
+st.warning("Il est important d'utiliser un échantillon contenant au maximum 9000 observations dans le cas d'analyse multidimensionnel, afin d'éviter de surcharger le serveur. Car l'application stocke toutes les données en mémoire RAM pour assurer la confidentialité des données, celles-ci étant temporaires et supprimées à chaque rafraîchissement de page, sans enregistrement permanent sur le serveur. De plus, une analyse d'échantillon ne nécessite pas de données plus large.")
 st.header('Conclusion')
 st.markdown("""
     L'application simplifie l'évaluation de la représentativité de vos échantillons par rapport à une population. En suivant ces étapes et en comprenant les résultats, vous pouvez prendre des décisions éclairées fondées sur des analyses statistiques rigoureuses.
