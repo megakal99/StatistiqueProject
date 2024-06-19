@@ -95,11 +95,17 @@ st.markdown("""
 st.header('Remarques et Conseils')
 st.markdown("""
     ● Lors de l'analyse d'un échantillon contenant une variable cible spécifique (par exemple, étudier la capacité de remboursement de crédits bancaires), nous pouvons utiliser une approche unidimensionnelle si cette variable est binaire ou quantitative, avec une moyenne ou une proportion représentative de la population.
+    
     ● Le vecteur de moyenne attendu est fortement recommandé mais non obligatoire ; il indique la moyenne de chaque variable quantitative dans la population, suggérée sur la base de données d'archives, d'expertise métier ou de pratiques courantes.
+    
     ● Alpha (par défaut à 5%).
+    
     ● Il est préférable d'utiliser un échantillon de taille supérieure à 2000.
+    
     ● Il est impératif de s'assurer qu'il n'y a pas de valeurs manquantes ni de duplications parmi les observations de l'échantillon.
+    
     ● Si votre échantillon inclut une variable cible qui représente toutes les variables, veuillez utiliser un test unidimensionnel binaire ou simple, selon le type de variable (binaire ou quantitative).
+    
     ● Il est obligatoire de supprimer toutes les caractéristiques ou variables qui sont utilisées uniquement pour identifier l'observation, par exemple le numéro de dossier, etc.
     """)
 
