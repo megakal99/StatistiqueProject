@@ -8,23 +8,23 @@ st.set_page_config(
 ##########################################
 st.title('Guide pour évaluer la représentativité d\'un échantillon💡')
 
-    st.header('Introduction Générale')
-    st.markdown("""
+st.header('Introduction Générale')
+st.markdown("""
     Cette application vise à vérifier si un échantillon représente correctement une population donnée. Elle est structurée en trois parties, chacune adaptée à différents types d'échantillons que vous pourriez rencontrer.
     """)
 
-    st.header('Section d\'Analyse d\'Échantillon Unidimensionnel (Variable Quantitative)')
-    st.markdown("""
+st.header('Section d\'Analyse d\'Échantillon Unidimensionnel (Variable Quantitative)')
+st.markdown("""
     Cette section est utile lorsque votre échantillon ne contient qu'une seule mesure quantitative, comme le salaire. Elle vous permet de déterminer si la moyenne de votre échantillon est similaire à celle de la population.
     """)
 
-    st.header('Section d\'Analyse d\'Échantillon Unidimensionnel Binaire')
-    st.markdown("""
+st.header('Section d\'Analyse d\'Échantillon Unidimensionnel Binaire')
+st.markdown("""
     Utilisez cette section si votre échantillon comprend une seule caractéristique binaire, comme Vrai/Faux ou Femme/Homme. Elle permet de vérifier si la proportion dans votre échantillon est proche de celle attendue dans la population.
     """)
 
-    st.header('Informations Nécessaires pour l\'Analyse')
-    st.markdown("""
+st.header('Informations Nécessaires pour l\'Analyse')
+st.markdown("""
     
     ➤ Moyenne (ou Proportion) Attendue :
         
@@ -47,35 +47,35 @@ st.title('Guide pour évaluer la représentativité d\'un échantillon💡')
         Si vous disposez de cette information pour la population, elle peut améliorer la précision de votre analyse par l'utilisation du z-test. Cependant, ce n'est pas obligatoire.
     """)
 
-    st.header('Conseils')
-    st.markdown("""
+st.header('Conseils')
+st.markdown("""
     ● Avant de commencer, assurez-vous d'avoir la moyenne attendue (ou la proportion).
     
     ● La p-value vous aide à décider si votre échantillon est vraiment représentatif de la population ou s'il y a une différence significative. Elle indique la probabilité d'erreur de type I, c'est-à-dire le risque de rejeter à tort l'hypothèse nulle.
     """)
 
-    st.header('Analyse Multidimensionnelle pour la Validation de l\'Échantillon')
+st.header('Analyse Multidimensionnelle pour la Validation de l\'Échantillon')
 
-    st.subheader('Test Paramétrique Multivarié (Hotteling Test)')
-    st.markdown("""
+st.subheader('Test Paramétrique Multivarié (Hotteling Test)')
+st.markdown("""
     Nous commençons par un test paramétrique multivarié des variables quantitatives de l'échantillon pour évaluer leur représentativité.
     """)
 
-    st.subheader('Approche de l\'Analyse en Composantes Principales (ACP)')
-    st.markdown("""
+st.subheader('Approche de l\'Analyse en Composantes Principales (ACP)')
+st.markdown("""
     En cas de non-validation des conditions du test paramétrique, nous utilisons une approche basée sur l'Analyse en Composantes Principales (ACP).
     """)
 
-    st.subheader('Analyse de Dépendance entre Variables Qualitatives et Quantitatives (Test de Kruskal)')
-    st.markdown("""
+st.subheader('Analyse de Dépendance entre Variables Qualitatives et Quantitatives (Test de Kruskal)')
+st.markdown("""
         Pour analyser la dépendance ou l'indépendance entre les variables qualitatives et les variables quantitatives, nous utilisons un test de Kruskal-Wallis (similaire à une ANOVA non paramétrique). Ce test évalue si les moyennes des variables quantitatives diffèrent significativement entre les groupes définis par les variables qualitatives. Comparer les résultats de ce test avec l'expertise métier ou les données historiques permet de prendre des décisions robustes sur la dépendance ou l'indépendance entre ces variables.
         
         Par exemple (si le test suggère qu'il y a une indépendance entre la catégorie d'âge et le nombre d'accidents routiers, ou une indépendance entre le salaire et la catégorie d'âge, cela indique que l'échantillon ne reflète pas correctement la population, car selon les pratiques courantes, il y a souvent une relation de dépendance entre la catégorie d'âge et le nombre d'accidents routiers, les jeunes ayant plus d'accidents par rapport aux personnes plus âgées, ou les jeunes ayant généralement un salaire plus bas que les personnes plus âgées).
 
     """)
 
-    st.subheader('Analyse de Dépendance entre Variables Qualitatives (Test du Chi carré)')
-    st.markdown("""
+st.subheader('Analyse de Dépendance entre Variables Qualitatives (Test du Chi carré)')
+st.markdown("""
        Enfin, nous utilisons un test du Chi carré pour évaluer la dépendance ou l'indépendance entre les différentes modalités des variables qualitatives dans l'échantillon. Cela nous aide à valider l'utilisation des proportions de chaque modalité dans l'échantillon par rapport à celles attendues dans la population.
 
        Par exemple (si le test suggère qu'il n'y a pas de dépendance entre le sexe et la variable de maladie saine, on peut dire que l'échantillon ne reflète pas la réalité ou la population en se basant sur l'expertise médicale, car la maladie saine touche davantage les femmes que les hommes, indiquant ainsi une dépendance entre ces variables).
@@ -84,8 +84,8 @@ st.title('Guide pour évaluer la représentativité d\'un échantillon💡')
 
     """)
     
-    st.header('Remarques et Conseils')
-    st.markdown("""
+st.header('Remarques et Conseils')
+st.markdown("""
     ● Lors de l'analyse d'un échantillon contenant une variable cible spécifique (par exemple, étudier la capacité de remboursement de crédits bancaires), nous pouvons utiliser une approche unidimensionnelle si cette variable est binaire ou quantitative, avec une moyenne ou une proportion représentative de la population.
     ● Le vecteur de moyenne attendu est fortement recommandé mais non obligatoire ; il indique la moyenne de chaque variable quantitative dans la population, suggérée sur la base de données d'archives, d'expertise métier ou de pratiques courantes.
     ● Alpha (par défaut à 5%).
@@ -95,8 +95,8 @@ st.title('Guide pour évaluer la représentativité d\'un échantillon💡')
     ● Il est obligatoire de supprimer toutes les caractéristiques ou variables qui sont utilisées uniquement pour identifier l'observation, par exemple le numéro de dossier, etc.
     """)
 
-    st.header('Conclusion')
-    st.markdown("""
-    Notre application simplifie l'évaluation de la représentativité de vos échantillons par rapport à une population. En suivant ces étapes simples et en comprenant les résultats, vous pouvez prendre des décisions éclairées fondées sur des analyses statistiques rigoureuses.
+st.header('Conclusion')
+st.markdown("""
+    L'application simplifie l'évaluation de la représentativité de vos échantillons par rapport à une population. En suivant ces étapes simples et en comprenant les résultats, vous pouvez prendre des décisions éclairées fondées sur des analyses statistiques rigoureuses.
     """)
 
