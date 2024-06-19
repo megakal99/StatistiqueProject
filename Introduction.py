@@ -33,17 +33,21 @@ st.markdown("""
       ● Pour les échantillons quantitatifs, il s'agit de la moyenne que vous attendez de trouver dans la population.
 
     ➤ Seuil de Significativité (α) :
+    
         ● C'est le niveau de confiance que vous souhaitez avoir dans votre conclusion. Les choix courants sont 1%, 5% ou 10%. Un niveau de 5% est souvent utilisé pour des décisions pratiques.
         
         ● Pour le seuil de significativité alpha, il est généralement facultatif dans notre application, mais par défaut, nous utilisons 5%, ce qui est recommandé pour la plupart des analyses statistiques.
 
     ➤ Interprétation des Résultats :
+    
         ● Hypothèse Nulle (H₀) : L'échantillon est représentatif de la population (la moyenne de l'échantillon n'est pas statistiquement différente de celle de la population).
         
         ● Hypothèse Alternative (H₁) : L'échantillon diffère de la population.
+        
         Si la p-value est inférieure à votre seuil α choisi, cela suggère une différence significative entre l'échantillon et la population.
 
     ➤ Écart-type ou Dispersion de la population (Facultatif) :
+    
         Si vous disposez de cette information pour la population, elle peut améliorer la précision de votre analyse par l'utilisation du z-test. Cependant, ce n'est pas obligatoire.
     """)
 
