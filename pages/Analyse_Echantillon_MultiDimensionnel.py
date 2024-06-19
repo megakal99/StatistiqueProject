@@ -478,6 +478,7 @@ def HandlePossibleCases(data):
             for result in results: 
                 st.write(result)
     elif nbrQvar>=2 and nbrCvar==0:
+        st.warning("Veuillez saisir les vrais paramètres, car les résultats actuels des tests pour les variables quantitatives ne reflètent pas l'échantillon.")
         checker=validate_hotellingTest_conditions(data)
         if checker:
             # Text input for the vector mean
@@ -503,6 +504,7 @@ def HandlePossibleCases(data):
             st.write(f"● On peut considére que la variable {TopRepresentativeVariable} comme une variable représentative des variables quantitatives, car elle contribue à la construction de la composante principale avec une contribution maximale de {min(100, round(max_contribution * 100, 2))}%, expliquant ainsi la variance maximale ({explained_variance}) de la population par rapport aux autres composantes.")
             st.table(results)
     elif nbrQvar==1 and nbrCvar==1:
+        st.warning("Veuillez saisir le vrai paramètre, car les résultats actuels des tests pour les variables quantitatives ne reflètent pas l'échantillon.")
         TopRepresentativeVariable=ACP(data)[2]
         expected_mean=st.number_input(f"Moyenne attendue de la variable {TopRepresentativeVariable} dans la population (requis)")
         selected_pairs_dep = get_pairs('combinaison des variables quantitaives /catégorielles')
@@ -514,6 +516,7 @@ def HandlePossibleCases(data):
         results=NaiveRepresentativenessByMeanTest(data,TopRepresentativeVariable,expected_mean,st.session_state.alpha)
         st.table(results)
     else:
+        st.warning("Veuillez saisir les vrais paramètres, car les résultats actuels des tests pour les variables quantitatives ne reflètent pas l'échantillon.")
         checker=validate_hotellingTest_conditions(data)
         selected_pairs_dep = get_pairs('combinaison des variables quantitaives /catégorielles')
         selected_pairs_depCateg = get_pairs('combinaison des variables catégorielles')
