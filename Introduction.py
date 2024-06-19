@@ -107,10 +107,16 @@ st.markdown("""
     ● Si votre échantillon inclut une variable cible qui représente toutes les variables, veuillez utiliser un test unidimensionnel binaire ou simple, selon le type de variable (binaire ou quantitative).
     
     ● Il est obligatoire de supprimer toutes les caractéristiques ou variables qui sont utilisées uniquement pour identifier l'observation, par exemple le numéro de dossier, etc.
+
+    ● L'intervalle de confiance est une mesure cruciale pour évaluer la représentativité d'un échantillon par rapport à une population plus large. Lorsque nous comparons la moyenne d'un échantillon à une moyenne attendue dans la population, nous utilisons l'intervalle de confiance pour quantifier l'incertitude autour de notre estimation.
+
+      Imaginez que nous étudions la moyenne des salaires dans une entreprise par rapport à la moyenne des salaires dans toute l'industrie. Si nous trouvons que la moyenne des salaires dans notre échantillon est de 50 000 euros avec un intervalle de confiance de 95%, cela signifie que nous sommes confiants à 95% que la vraie moyenne des salaires dans l'industrie se situe quelque part entre, par exemple, 48 000 et 52 000 euros.
+
+      Cet intervalle de confiance nous permet de prendre en compte la variabilité naturelle des données d'échantillon et nous aide à décider si notre échantillon est suffisamment représentatif de la population plus large. Plus l'intervalle de confiance est étroit, plus notre estimation est précise et plus nous pouvons être confiants dans la représentativité de notre échantillon.
     """)
 
 st.header('Conclusion')
 st.markdown("""
-    L'application simplifie l'évaluation de la représentativité de vos échantillons par rapport à une population. En suivant ces étapes simples et en comprenant les résultats, vous pouvez prendre des décisions éclairées fondées sur des analyses statistiques rigoureuses.
+    L'application simplifie l'évaluation de la représentativité de vos échantillons par rapport à une population. En suivant ces étapes et en comprenant les résultats, vous pouvez prendre des décisions éclairées fondées sur des analyses statistiques rigoureuses.
     """)
 
