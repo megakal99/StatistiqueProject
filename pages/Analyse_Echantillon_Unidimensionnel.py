@@ -192,10 +192,10 @@ if data_choice == "Uploader un fichier":
     if uploaded_file is not None:
         if uploaded_file.name.endswith('.csv'):
             data = pd.read_csv(uploaded_file)
-            validateDataQuality(data)
+            validateDataQuality()
         elif uploaded_file.name.endswith('.xlsx'):
             data = pd.read_excel(uploaded_file, engine='openpyxl')
-            validateDataQuality(data)
+            validateDataQuality()
         else:
             st.error("Le format de fichier n'est pas pris en charge.")
             st.stop()
