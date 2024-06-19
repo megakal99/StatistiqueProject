@@ -134,16 +134,16 @@ def analyze_sample(data, expected_mean, alpha, population_std=None):
     # Construct result dictionary
     result1 = {
         "Nbr de l'obseravtions dans l'échantillon":[sample_size],
-        "moyenne de l'échantillon": [round(mean,2)],
-        "Ecart-Type de l'échantillon": [round(std_dev,2)],
-        "median de l'échantillon": [round(median,2)],
-        "percentile_25 de l'échantillon": [round(percentile_25,2)],
-        "percentile_75 de l'échantillon": [round(percentile_75,2)],
+        "moyenne de l'échantillon": [mean],
+        "Ecart-Type de l'échantillon": [std_dev],
+        "median de l'échantillon": [median],
+        "percentile_25 de l'échantillon": [percentile_25],
+        "percentile_75 de l'échantillon": [percentile_75],
         "max de l'échantillon": [max_val],
         "min de l'échantillon": [min_val]
     }
     result2={
-            "test_statistic": [round(t_stat,2)] if population_std is None else [round(z_stat,2)],
+            "test_statistic": [t_stat] if population_std is None else [z_stat],
             "p_value": [f'{round(p_value*100,2)}%'],
             "alpha": [f'{round(alpha*100,2)}%'],
             "critical_value": [critical_value],
