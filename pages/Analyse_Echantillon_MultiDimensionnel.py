@@ -74,7 +74,7 @@ def validateData():
     global data
     # Vérifier si le nombre d'observations est suffisant
     if data.shape[0]>8000:
-        st.warning(f"Vous avez téléchargé un échantillon contenant plus de 8000 observations, ce qui pourrait entraîner une surcharge du serveur. Nous avons pris un sous-échantillon aléatoire contenant entre 2000 et 8000 observations.")
+        st.warning(f"Vous avez téléchargé un échantillon contenant plus de 8000 observations, ce qui pourrait entraîner une surcharge du serveur en raison de l'analyse. Nous avons pris un sous-échantillon aléatoire contenant 8000 observations.")
         # Générer un nombre aléatoire de lignes entre 2000 et 8000
         #subset_size = np.random.randint(2000, 8001)
         # Sélectionner aléatoirement un sous-ensemble de données à partir l'échantillon
