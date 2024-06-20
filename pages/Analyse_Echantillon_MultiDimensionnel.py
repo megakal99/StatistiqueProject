@@ -420,13 +420,13 @@ def displayCorrMatrix(X, nbrQvar):
         corr = X[numeric_cols].corr()
         
         # Plot
-        plt.figure(figsize=(12, 6))
+        fig, ax = plt.subplots(figsize=(12, 6))
         sns.heatmap(corr, annot=True, cmap='coolwarm', fmt='.2f',annot_kws={"size": 15})
         plt.title("Matrice de corrélation")
         plt.tight_layout()
         
         # Afficher le graphique dans Streamlit
-        st.pyplot()
+        st.pyplot(fig)
 ##########################################################################
 def DispalyStats(X,nbrQvar,nbrCvar):
     """
