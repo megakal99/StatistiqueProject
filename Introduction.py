@@ -120,7 +120,7 @@ st.markdown("""
 
     ● Dans le cas d'une analyse multidimensionnelle, les tests par défaut sont lancés avec des paramètres prédéfinis qui ne reflètent pas l'échantillon après le téléchargement des données ou la génération de données aléatoires. Il est donc nécessaire de saisir les paramètres correspondants pour retester et obtenir des résultats statistiques robustes qui reflètent l'échantillon.
 
-    ● Dans le cas d'une analyse multidimensionnelle, si l'échantillon téléchargé dépasse 8000 observations, l'application sélectionne aléatoirement un sous-échantillon de 8000 observations afin d'éviter une surcharge du serveur. 
+    ● Dans le cas d'une analyse multidimensionnelle, si l'échantillon téléchargé dépasse 8000 observations, l'application sélectionne aléatoirement un sous-échantillon de 8000 observations afin d'éviter une surcharge du serveur, due à l'analyse intensive. 
     
     """)
 st.succes("L'application stocke toutes les données en mémoire RAM pour garantir la confidentialité. Ces données sont temporaires et supprimées à chaque rafraîchissement de page, sans enregistrement permanent sur le serveur.")
