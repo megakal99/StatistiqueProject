@@ -62,29 +62,34 @@ def generate_multidimensional_data(size, nbrQvar, nbrCvar):
     
     return data, vectAverage
 #################################
-def validateData(X):
+def validateData():
     """
     Valide les données en vérifiant plusieurs critères pour garantir leur adéquation à l'analyse statistique.
 
-    Args:
-        X (pd.DataFrame): Le jeu de données à valider.
-
     Raises:
+    
         RuntimeError: Si l'une des conditions de validation n'est pas satisfaite, une erreur est affichée et l'exécution est arrêtée.
 
     """
+    global data
     # Vérifier si le nombre d'observations est suffisant
-    if X.shape[0] < estimated_sample_size:
+    if data.shape[0]>8000:
+        st.warning(f"Vous avez téléchargé un échantillon contenant plus de 8000 observations, ce qui pourrait entraîner une surcharge du serveur. Nous avons pris un sous-échantillon aléatoire contenant entre 2000 et 8000 observations.")
+        # Générer un nombre aléatoire de lignes entre 2000 et 8000
+        subset_size = np.random.randint(2000, 8001)
+        # Sélectionner aléatoirement un sous-ensemble de données à partir l'échantillon
+        data = data.sample(n=subset_size)
+    if data.shape[0] < estimated_sample_size:
         st.error(f"Le nombre d'observations doit être au moins égal à la taille d'échantillon estimée : {estimated_sample_size}, pour garantir la significativité de l'analyse.")
         st.stop()
 
     # Vérifier si le jeu de données est multidimensionnel (plus d'une variable)
-    if X.shape[1] == 1:
+    if data.shape[1] == 1:
         st.error("Le nombre de variables (colonnes) est égal à 1. Cette analyse nécessite plusieurs variables. Veuillez utiliser un jeu de données avec plusieurs variables!")
         st.stop()
 
     # Vérifier s'il y a des valeurs manquantes
-    if X.isnull().sum().sum():
+    if data.isnull().sum().sum():
         st.error("Il y a des valeurs manquantes à remplir ou à supprimer. Veuillez vérifier vos données!")
         st.stop()
 
@@ -596,13 +601,13 @@ if data_choice == "Uploader un fichier":
     if uploaded_file is not None:
         if uploaded_file.name.endswith('.csv'):
             data = pd.read_csv(uploaded_file)
-            validateData(data)
+            validateData()
             nbrQvar,nbrCvar=definePossibleCases(data)
             alpha = st.sidebar.slider("Niveau de signification (alpha)", min_value=0.01, max_value=0.10, value=0.05, step=0.01)
             trigger=1
         elif uploaded_file.name.endswith('.xlsx'):
             data = pd.read_excel(uploaded_file, engine='openpyxl')
-            validateData(data)
+            validateData()
             nbrQvar,nbrCvar=definePossibleCases(data)
             alpha = st.sidebar.slider("Niveau de signification (alpha)", min_value=0.01, max_value=0.10, value=0.05, step=0.01)
             trigger=1
@@ -616,7 +621,7 @@ if data_choice == "Uploader un fichier":
         st.session_state.trigger = trigger
 
 elif data_choice == "Générer des données aléatoires":
-    data_size = st.sidebar.number_input("Taille de l'échantillon", min_value=1800, max_value=50000, value=1800)
+    data_size = st.sidebar.number_input("Taille de l'échantillon", min_value=1800, max_value=8000, value=1800)
     nbrQvar= st.sidebar.number_input("le nombre des variables quantitatives à générer", min_value=2, max_value=5)
     nbrCvar= st.sidebar.number_input("le nombre des variables qualitatives à générer", min_value=2, max_value=5)
     alpha = st.sidebar.slider("Niveau de signification (alpha)", min_value=0.01, max_value=0.10, value=0.05, step=0.01)
