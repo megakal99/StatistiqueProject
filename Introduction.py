@@ -119,9 +119,11 @@ st.markdown("""
     ● Pour l'analyse multidimensionnelle, pour les fichiers CSV, vérifiez que les valeurs sont également séparées par des virgules et que la première ligne contient un en-tête avec les noms des variables - également séparés par des virgules. Pour les fichiers Excel, les données doivent avoir un en-tête indiquant les noms des variables. Tout cela est essentiel pour assurer le bon fonctionnement des tests sans erreurs.
 
     ● Dans le cas d'une analyse multidimensionnelle, les tests par défaut sont lancés avec des paramètres prédéfinis qui ne reflètent pas l'échantillon après le téléchargement des données ou la génération de données aléatoires. Il est donc nécessaire de saisir les paramètres correspondants pour retester et obtenir des résultats statistiques robustes qui reflètent l'échantillon.
+
+    ● Dans le cas d'une analyse multidimensionnelle, si l'échantillon téléchargé dépasse 8000 observations, l'application sélectionne aléatoirement un sous-échantillon de 8000 observations afin d'éviter une surcharge du serveur. 
     
     """)
-st.warning("Il est obligatoire d'utiliser un échantillon contenant au maximum 8000 observations dans le cas d'une analyse multidimensionnelle, afin d'éviter de surcharger le serveur. L'application stocke toutes les données en mémoire RAM pour assurer la confidentialité. Ces données sont temporaires et supprimées à chaque rafraîchissement de page, sans enregistrement permanent sur le serveur. Cela nécessite également au moins 4 Go de mémoire RAM libre dans le cas d'utilisation d'un grand échantillon, ce qui dépasse les limites actuelles du serveur. De plus, une analyse d'échantillon n'exige pas de volumes de données plus importants.")
+st.succes("L'application stocke toutes les données en mémoire RAM pour garantir la confidentialité. Ces données sont temporaires et supprimées à chaque rafraîchissement de page, sans enregistrement permanent sur le serveur.")
 st.header('Conclusion')
 st.markdown("""
     L'application simplifie l'évaluation de la représentativité de vos échantillons par rapport à une population. En suivant ces étapes et en comprenant les résultats, vous pouvez prendre des décisions éclairées fondées sur des analyses statistiques rigoureuses.
