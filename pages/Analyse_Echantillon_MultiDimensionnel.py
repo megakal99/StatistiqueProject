@@ -469,6 +469,7 @@ def get_pairs(aux):
         return pairs
     
 ##############################################################
+@st.cache
 def HandlePossibleCases(data):
     nbrQvar,nbrCvar=len(st.session_state.Qvars),len(st.session_state.Cvars)
     if nbrQvar==0 and nbrCvar>=2:
