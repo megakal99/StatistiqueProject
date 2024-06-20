@@ -109,26 +109,26 @@ def analyze_sample(data, expected_mean, alpha, population_std=None):
         ci_upper = mean + critical_value * (std_dev/(sample_size**0.5))
         test_result=(
         f"❌ L'hypothèse nulle est rejetée, ce qui démontre de manière significative une différence "
-        f"entre la proportion de l'échantillon et celle de la population. Ainsi, il est évident que "
-        f"l'échantillon n'est pas représentatif en termes de proportion, avec une erreur de {round(p_value*100,2)}%"
+        f"entre la moyenne de l'échantillon et celle de la population. Ainsi, il est évident que "
+        f"l'échantillon n'est pas représentatif, avec une erreur de {round(p_value*100,2)}%"
         ) if p_value < alpha else (
         f"✅ On ne peut pas rejeter l'hypothèse nulle H0, qui suggère que notre échantillon ne diffère "
         f"pas de manière significative de la population étudiée. Ainsi, nous ne pouvons pas conclure que "
-        f"la proportion de l'échantillon est significativement différente de la proportion de la population. "
-        f"En d'autres termes, l'échantillon est représentatif en termes de proportion!!!"
+        f"la moyenne de l'échantillon est significativement différente de la moyenne de la population. "
+        f"En d'autres termes, l'échantillon est représentatif!!!"
         )
     else:
         # Z-test
         z_stat, p_value, ci_lower, ci_upper = z_test(mean, expected_mean, population_std, sample_size, alpha)
         test_result=(
         f"❌ L'hypothèse nulle est rejetée, ce qui démontre de manière significative une différence "
-        f"entre la proportion de l'échantillon et celle de la population. Ainsi, il est évident que "
-        f"l'échantillon n'est pas représentatif en termes de proportion, avec une erreur de {round(p_value*100,2)}%"
+        f"entre la moyenne de l'échantillon et celle de la population. Ainsi, il est évident que "
+        f"l'échantillon n'est pas représentatif, avec une erreur de {round(p_value*100,2)}%"
         ) if p_value <= alpha else (
         f"✅ On ne peut pas rejeter l'hypothèse nulle H0, qui suggère que notre échantillon ne diffère "
         f"pas de manière significative de la population étudiée. Ainsi, nous ne pouvons pas conclure que "
-        f"la proportion de l'échantillon est significativement différente de la proportion de la population. "
-        f"En d'autres termes, l'échantillon est représentatif en termes de proportion!!!"
+        f"la moyenne de l'échantillon est significativement différente de la moyenne de la population. "
+        f"En d'autres termes, l'échantillon est représentatif!!!"
         )
         critical_value = round(stats.norm.ppf(1 - alpha / 2),2)
     # Construct result dictionary
