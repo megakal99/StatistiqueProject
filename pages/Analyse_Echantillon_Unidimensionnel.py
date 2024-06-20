@@ -11,7 +11,7 @@ st.set_page_config(
 )
 
 # Disable warning for Pyplot Global Use
-st.set_option('deprecation.showPyplotGlobalUse', False)
+#st.set_option('deprecation.showPyplotGlobalUse', False)
 ############################################
 def validateDataQuality():
     global data
