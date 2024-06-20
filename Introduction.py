@@ -123,7 +123,7 @@ st.markdown("""
     ● Dans le cas d'une analyse multidimensionnelle, si l'échantillon téléchargé dépasse 8000 observations, l'application sélectionne aléatoirement un sous-échantillon de 8000 observations afin d'éviter une surcharge du serveur, due à l'analyse intensive. 
     
     """)
-st.succes("L'application stocke toutes les données en mémoire RAM pour garantir la confidentialité. Ces données sont temporaires et supprimées à chaque rafraîchissement de page, sans enregistrement permanent sur le serveur.")
+st.success("L'application stocke toutes les données en mémoire RAM pour garantir la confidentialité. Ces données sont temporaires et supprimées à chaque rafraîchissement de page, sans enregistrement permanent sur le serveur.")
 st.header('Conclusion')
 st.markdown("""
     L'application simplifie l'évaluation de la représentativité de vos échantillons par rapport à une population. En suivant ces étapes et en comprenant les résultats, vous pouvez prendre des décisions éclairées fondées sur des analyses statistiques rigoureuses.
