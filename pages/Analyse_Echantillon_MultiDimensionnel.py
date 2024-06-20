@@ -183,13 +183,13 @@ def tttestmultivariate(X, null_hypothesis_means,alpha):
     p_value = round(result['pval'][0],2)
     interpretation=(
         f"❌ L'hypothèse nulle est rejetée, ce qui démontre de manière significative une différence "
-        f"entre la proportion de l'échantillon et celle de la population. Ainsi, il est évident que "
-        f"l'échantillon n'est pas représentatif en termes de proportion, avec une erreur de {p_value*100}%"
+        f"entre la moyenne de l'échantillon et celle de la population. Ainsi, il est évident que "
+        f"l'échantillon n'est pas représentatif, avec une erreur de {p_value*100}%"
         ) if p_value < alpha else (
         f"✅ On ne peut pas rejeter l'hypothèse nulle H0, qui suggère que notre échantillon ne diffère "
         f"pas de manière significative de la population étudiée. Ainsi, nous ne pouvons pas conclure que "
-        f"la proportion de l'échantillon est significativement différente de la proportion de la population. "
-        f"En d'autres termes, l'échantillon est représentatif en termes de proportion!!!"
+        f"la moyenne de l'échantillon est significativement différente de la moyenne de la population. "
+        f"En d'autres termes, l'échantillon est représentatif en termes de caractéristiques quantitatives!!!"
         )
     results=pd.DataFrame({'T2':[T2],'F':[F],'p_value':[f'{p_value*100}%'],'alpha':[f'{alpha*100}%'],'Interprétation':[interpretation]})
     return results
@@ -251,12 +251,12 @@ def NaiveRepresentativenessByMeanTest(X, TopRepresentativeVariable, expected_mea
 
     # Interpréter le résultat du test en fonction du p-value et du niveau de signification alpha
     test_result = (
-        f"❌ L'hypothèse nulle est rejetée. Il existe une différence significative entre la proportion de l'échantillon "
+        f"❌ L'hypothèse nulle est rejetée. Il existe une différence significative entre la moyenne de l'échantillon "
         f"et celle de la population avec une erreur de {round(p_value*100, 2)}%. Par conséquent, l'échantillon n'est pas "
-        f"représentatif en termes de proportion."
+        f"représentatif en termes de moyenne."
     ) if p_value < alpha else (
         f"✅ L'hypothèse nulle H0 ne peut pas être rejetée. Cela suggère que l'échantillon ne diffère pas de manière "
-        f"significative de la population étudiée. Ainsi, nous pouvons conclure que l'échantillon est représentatif en termes de proportion."
+        f"significative de la population étudiée. Ainsi, nous pouvons conclure que l'échantillon est représentatif en termes de moyenne."
     )
 
     # Créer un DataFrame pour stocker les résultats du test
