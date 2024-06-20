@@ -168,13 +168,13 @@ def plot_distribution(data):
     st.header("Visualisation")
     # Tracer le graphique de distribution
     fig, ax = plt.subplots(figsize=(12, 6))
-    plt.subplot(2, 2, 1)
+    #plt.subplot(2, 2, 1)
     sns.histplot(data, kde=True)
     plt.title("Graphique de Distribution")
     st.pyplot(fig)
     # Tracer le graphique en boîte
     fig, ax = plt.subplots(figsize=(12, 6))
-    plt.subplot(2, 2, 2)
+    #plt.subplot(2, 2, 2)
     sns.boxplot(y=data)
     plt.title("Boîte à moustaches")
 
