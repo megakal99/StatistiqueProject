@@ -633,7 +633,7 @@ elif data_choice == "Générer des données aléatoires":
 #button=st.sidebar.button('Analyser',key='button0')
 if st.session_state.trigger:
     DispalyStats(st.session_state.data,len(st.session_state.Qvars),len(st.session_state.Cvars))
-
+    st.session_state.clear()
     
 
     
