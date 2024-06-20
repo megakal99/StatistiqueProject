@@ -11,7 +11,7 @@ st.set_page_config(
 )
 
 # Disable warning for Pyplot Global Use
-st.set_option('deprecation.showPyplotGlobalUse', False)
+#st.set_option('deprecation.showPyplotGlobalUse', False)
 ###################################################""
 mean_sample=None
 sample_size=None
@@ -161,12 +161,13 @@ def plot_binary_distribution_pie(data):
     counts = data.value_counts()
 
     # Tracer le graphique circulaire
-    plt.figure(figsize=(6, 6))
+    fig, ax = plt.subplots(figsize=(6, 6))
+    #plt.figure(figsize=(6, 6))
     sns.set_style("whitegrid")
     plt.pie(counts, labels=counts.index, autopct='%1.1f%%', startangle=90)
     plt.title("Répartition des données binaires")
     plt.tight_layout()
-    st.pyplot()
+    st.pyplot(fig)
 ##################################################################################
 # Le titre de la page et la description
 st.title("Analyse de l'Echantillon Binaire")
