@@ -167,7 +167,7 @@ def plot_distribution(data):
     st.divider()
     st.header("Visualisation")
     # Tracer le graphique de distribution
-    plt.figure(figsize=(12, 6))
+    fig, ax = plt.subplots(figsize=(12, 6))
     plt.subplot(2, 2, 1)
     sns.histplot(data, kde=True)
     plt.title("Graphique de Distribution")
@@ -178,7 +178,7 @@ def plot_distribution(data):
     plt.title("Boîte à moustaches")
 
     plt.tight_layout()
-    st.pyplot()
+    st.pyplot(fig)
 ########################################################################################"
 
 # Le titre de la page et la description
