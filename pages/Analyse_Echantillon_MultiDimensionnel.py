@@ -15,7 +15,7 @@ st.set_page_config(
 )
 
 # Désactiver l'avertissement concernant l'utilisation globale de Pyplot
-st.set_option('deprecation.showPyplotGlobalUse', False)
+#st.set_option('deprecation.showPyplotGlobalUse', False)
 ###################################
 numeric_columnsList=[]
 Categorical_variables=[]
