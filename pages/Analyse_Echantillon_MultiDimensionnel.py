@@ -5,8 +5,6 @@ from scipy.stats import kruskal,ttest_1samp,chi2_contingency
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
-from sklearn.preprocessing import StandardScaler
-from sklearn.decomposition import PCA
 import random,itertools
 ###############################""
 st.set_page_config(
@@ -14,8 +12,6 @@ st.set_page_config(
     page_icon="static/ico.png",  
 )
 
-# Désactiver l'avertissement concernant l'utilisation globale de Pyplot
-#st.set_option('deprecation.showPyplotGlobalUse', False)
 ###################################
 numeric_columnsList=[]
 Categorical_variables=[]
@@ -78,7 +74,8 @@ def validateData():
         # Générer un nombre aléatoire de lignes entre 2000 et 8000
         #subset_size = np.random.randint(2000, 8001)
         # Sélectionner aléatoirement un sous-ensemble de données à partir l'échantillon
-        data = data.sample(n=8000)
+        #data = data.sample(n=8000)
+        pass
     if data.shape[0] < estimated_sample_size:
         st.error(f"Le nombre d'observations doit être au moins égal à la taille d'échantillon estimée : {estimated_sample_size}, pour garantir la significativité de l'analyse.")
         st.stop()
@@ -195,78 +192,88 @@ def tttestmultivariate(X, null_hypothesis_means,alpha):
     return results
     
 #######################################################################
-def ACP(X):
-    """
-    Effectue une Analyse en Composantes Principales (ACP) sur un ensemble de données X.
+# def ACP(X):
+#     """
+#     Effectue une Analyse en Composantes Principales (ACP) sur un ensemble de données X.
 
-    Args:
-        X (pd.DataFrame): Le DataFrame contenant les données numériques à analyser.
+#     Args:
+#         X (pd.DataFrame): Le DataFrame contenant les données numériques à analyser.
 
-    Returns:
-        str: Pourcentage de la variance expliquée par le premier composant principal.
-        float: La contribution maximale d'une variable au premier composant principal.
-        str: Le nom de la variable ayant la plus grande contribution au premier composant principal.
-    """
-    # Sélectionner les colonnes numériques à inclure dans l'ACP
-    numeric_columnsList = st.session_state.Qvars
-    col = list(X[numeric_columnsList].columns)
+#     Returns:
+#         str: Pourcentage de la variance expliquée par le premier composant principal.
+#         float: La contribution maximale d'une variable au premier composant principal.
+#         str: Le nom de la variable ayant la plus grande contribution au premier composant principal.
+#     """
+#     # Sélectionner les colonnes numériques à inclure dans l'ACP
+#     numeric_columnsList = st.session_state.Qvars
+#     col = list(X[numeric_columnsList].columns)
 
-    # Standardisation des données
-    scaler = StandardScaler()
-    df_standardized = pd.DataFrame(scaler.fit_transform(X[numeric_columnsList]), columns=col)
+#     # Standardisation des données
+#     scaler = StandardScaler()
+#     df_standardized = pd.DataFrame(scaler.fit_transform(X[numeric_columnsList]), columns=col)
 
-    # Appliquer l'analyse en composantes principales (PCA)
-    pca = PCA(n_components=1)
-    pca.fit(df_standardized)
+#     # Appliquer l'analyse en composantes principales (PCA)
+#     pca = PCA(n_components=3)
+#     pca.fit(df_standardized)
 
-    # Obtenir la variance expliquée par le premier composant principal
-    explained_variance = pca.explained_variance_ratio_
+#     # Obtenir la variance expliquée par le premier composant principal
+#     explained_variance = pca.explained_variance_ratio_
 
-    # Obtenir les contributions de chaque variable aux composantes principales
-    loadings_df = pd.DataFrame(pca.components_.T, columns=['PC1_vector'], index=col)
-    loadings_df = loadings_df * np.sqrt(pca.explained_variance_)
+#     # Obtenir les contributions de chaque variable aux composantes principales
+#     loadings_df = pd.DataFrame(pca.components_.T, columns=['PC1_vector','PC2_vector','PC3_vector'], index=col)
+#     loadings_df = loadings_df * np.sqrt(pca.explained_variance_)
 
-    # Calculer la contribution maximale et la variable correspondante
-    max_contribution = abs(loadings_df).max(axis=0)[0]
-    TopRepresentativeVariable = abs(loadings_df).idxmax(axis=0)[0]
+#     # Calculer la contribution maximale et la variable correspondante
+#     max_contribution = abs(loadings_df).max(axis=0)[0]
+#     TopRepresentativeVariable = abs(loadings_df).idxmax(axis=0)[0]
 
-    return f'{round(explained_variance[0],2)*100}%', max_contribution, TopRepresentativeVariable
+#     return f'{round(explained_variance[0],2)*100}%', max_contribution, TopRepresentativeVariable
 #######################################################################
-def NaiveRepresentativenessByMeanTest(X, TopRepresentativeVariable, expected_mean, alpha):
+def SimpleRepresentativenessBy_T_test(X, expected_mean, alpha):
     """
-    Effectue un test de comparaison de moyenne (t-test) pour évaluer la représentativité naïve d'un échantillon.
-
+    Effectue un test de comparaison de moyennes (test t) pour évaluer la représentativité des variables par rapport à la population globale.
     Args:
         X (pd.DataFrame): Le DataFrame contenant les données.
-        TopRepresentativeVariable (str): Le nom de la variable représentative.
-        expected_mean (float): La moyenne attendue de la population.
-        alpha (float): Le niveau de signification pour le test.
+        expected_mean (list | float): Le vecteur des moyennes attendues reflète la moyenne des variables pour la population globale.
+        alpha (float): Le niveau de signification pour le test (Erreur de type 1, les faux positifs).
 
     Returns:
         pd.DataFrame: Un DataFrame contenant les résultats du test.
     """
     st.subheader("Résultat du test de représentativité de la population pour variable(s) quantitative(s)")
+    # Sélectionner les colonnes numériques à inclure dans le test
+    numeric_columnsList = st.session_state.Qvars
+    columns = list(X[numeric_columnsList].columns)
+    t_stats,p_values,alphas,Interprétations=[],[],len(columns)*[f'{round(alpha*100, 2)}%'],[]
     # Effectuer le test t de Student pour une seule population
-    t_stat, p_value = ttest_1samp(X[TopRepresentativeVariable], expected_mean)
-
-    # Interpréter le résultat du test en fonction du p-value et du niveau de signification alpha
-    test_result = (
-        f"❌ L'hypothèse nulle est rejetée. Il existe une différence significative entre la moyenne de l'échantillon "
-        f"et celle de la population avec une erreur de {round(p_value*100, 2)}%. Par conséquent, l'échantillon n'est pas "
-        f"représentatif en termes de moyenne."
-    ) if p_value < alpha else (
-        f"✅ L'hypothèse nulle H0 ne peut pas être rejetée. Cela suggère que l'échantillon ne diffère pas de manière "
-        f"significative de la population étudiée. Ainsi, nous pouvons conclure que l'échantillon est représentatif en termes de moyenne."
-    )
+    for i,nom_variable in enumerate(columns):
+        if len(columns)==1:
+            t_stat, p_value = ttest_1samp(X[nom_variable], expected_mean)
+        else:
+            t_stat, p_value = ttest_1samp(X[nom_variable], expected_mean[i])
+        
+        # Interpréter le résultat du test en fonction du p-value et du niveau de signification alpha
+        test_result = (
+            f"❌ L'hypothèse nulle est rejetée. Il existe une différence significative entre la moyenne de la variable dans l'échantillon"
+            f"et celle de la population avec une erreur de {round(p_value*100, 2)}%. Par conséquent, la variable dans "
+            f"l'échantillon n'est pas représentative de la même variable dans la population."
+        ) if p_value < alpha else (
+            f"✅ L'hypothèse nulle H0 ne peut pas être rejetée. Cela suggère que la variable dans l'échantillon ne diffère pas de manière "
+            f"significative de la même variable dans la population étudiée. Ainsi, nous pouvons conclure que la variable dans l'échantillon est représentative de celle dans la population."
+        )
+        # Ajoutez les résultats du test aux listes concernées.
+        t_stats.append(t_stat)
+        p_values.append(f'{round(p_value*100, 2)}%')
+        Interprétations.append(test_result)
 
     # Créer un DataFrame pour stocker les résultats du test
     results = pd.DataFrame({
-        't_stat': [t_stat],
-        'p_value': [f'{round(p_value*100, 2)}%'],
-        'alpha': [f'{round(alpha*100, 2)}%'],
-        'Interprétation': [test_result]
-    })
-
+        't_stat': t_stats,
+        'p_value': p_values,
+        'alpha': alphas,
+        'Interprétation': Interprétations
+    },index=columns)
+    
     return results
 ############################################################################
 def NonParametricAnova(X, alpha, ListofPairs):
@@ -371,7 +378,6 @@ def descriptive_statistics(X, nbrQvar, nbrCvar):
     
     if nbrQvar > 0:
         # Numeric variables
-        numeric_cols = st.session_state.Qvars
         numeric_stats = X.describe().transpose()
         # Renaming columns
         numeric_stats.rename(columns={
@@ -392,7 +398,7 @@ def descriptive_statistics(X, nbrQvar, nbrCvar):
         # Categorical variables
         categorical_cols = st.session_state.Cvars
         X[categorical_cols] = X[categorical_cols].astype(str)
-        categorical_stats = X[categorical_cols].apply(lambda x: x.value_counts(normalize=True)).fillna(0)
+        categorical_stats = X[categorical_cols].apply(lambda x: x.value_counts(normalize=True))
         # Créer un dictionnaire pour stocker toutes les statistiques
         statistics['Variables Catégorielles'] = categorical_stats.to_dict()
         
@@ -483,100 +489,89 @@ def HandlePossibleCases(data):
             for result in results: 
                 st.write(result)
     elif nbrQvar>=2 and nbrCvar==0:
-        st.warning("Veuillez saisir les vrais paramètres, car les résultats actuels des tests pour les variables quantitatives ne reflètent pas l'échantillon.")
         checker=validate_hotellingTest_conditions(data)
-        if checker:
-            # Text input for the vector mean
-            st.write("Veuillez simplement entrer la moyenne vectorielle attendue de la population, séparée par des virgules (recommandé, par exemple : 1, 2.7, 3, etc.). Ignorez le deuxième formulaire si vous disposez déjà des données d'entrée (vecteur de moyennes). Sinon, il est nécessaire de saisir une valeur de base reflétant la moyenne réelle de la variable suggérée dans l'indication au-dessus du formulaire correspondant.")
-            st.warning("Le vecteur doit contenir un nombre d'éléments égal au nombre de variables quantitatives!")
-            vector_mean_input = st.text_input('Vecteurs de moyennes attendu de la population')
-            # Convert the input string to a list of floats
-            if vector_mean_input:
-                CenterInertia=vector_mean_input.split(',')
-                vector_mean = [float(num) for num in CenterInertia]
-                st.table(tttestmultivariate(data, vector_mean,st.session_state.alpha))
+        # Text input for the vector mean
+        st.write("Veuillez entrer la moyenne vectorielle attendue de la population, séparée par des virgules (par exemple : 1, 2.7, 3.2, etc...). \n Veuillez respecter le même ordre des variables quantitatives continues dans vos données.")
+        st.warning(f"Le vecteur doit contenir un nombre d'éléments égal au nombre de variables quantitatives {nbrQvar}!")
+        vector_mean_input = st.text_input(f"Vecteur des moyennes attendues des {nbrQvar} variables quantitatives pour la population globale:",placeholder='Entrez les {nbrQvar} moyennes séparées par des virgules')        
+        # Convert the input string to a list of floats
+        if vector_mean_input:
+            CenterInertia=vector_mean_input.split(',')
+            vector_mean = [float(num) for num in CenterInertia]
+            if checker:
+               st.table(tttestmultivariate(data, vector_mean,st.session_state.alpha))
             else:
-                explained_variance,max_contribution,TopRepresentativeVariable=ACP(data)
-                expected_mean=st.number_input(f"Moyenne attendue de la variable {TopRepresentativeVariable} dans la population (requis)")
-                
-                results=NaiveRepresentativenessByMeanTest(data,TopRepresentativeVariable,expected_mean,st.session_state.alpha)
-                st.write(f"● On peut considére que la variable {TopRepresentativeVariable} comme une variable représentative des variables quantitatives, car elle contribue à la construction de la composante principale avec une contribution maximale de {min(100, round(max_contribution * 100, 2))}%, expliquant ainsi la variance maximale ({explained_variance}) de la population par rapport aux autres composantes.")
-                st.table(results)
+               st.table(SimpleRepresentativenessBy_T_test(data,vector_mean,st.session_state.alpha))
         else:
-            TopRepresentativeVariable=ACP(data)[2]
-            expected_mean=st.number_input(f"Moyenne attendue de la variable {TopRepresentativeVariable} dans la population (requis)")
-            results=NaiveRepresentativenessByMeanTest(data,TopRepresentativeVariable,expected_mean,st.session_state.alpha)
-            st.write(f"● On peut considére que la variable {TopRepresentativeVariable} comme une variable représentative des variables quantitatives, car elle contribue à la construction de la composante principale avec une contribution maximale de {min(100, round(max_contribution * 100, 2))}%, expliquant ainsi la variance maximale ({explained_variance}) de la population par rapport aux autres composantes.")
-            st.table(results)
+            pass
+            # TopRepresentativeVariable=ACP(data)[2]
+            # expected_mean=st.number_input(f"Moyenne attendue de la variable {TopRepresentativeVariable} dans la population (requis)")
+            # results=NaiveRepresentativenessByMeanTest(data,TopRepresentativeVariable,expected_mean,st.session_state.alpha)
+            # st.write(f"● On peut considére que la variable {TopRepresentativeVariable} comme une variable représentative des variables quantitatives, car elle contribue à la construction de la composante principale avec une contribution maximale de {min(100, round(max_contribution * 100, 2))}%, expliquant ainsi la variance maximale ({explained_variance}) de la population par rapport aux autres composantes.")
+            # st.table(results)
     elif nbrQvar==1 and nbrCvar==1:
-        st.warning("Veuillez saisir le vrai paramètre, car les résultats actuels des tests pour les variables quantitatives ne reflètent pas l'échantillon.")
-        TopRepresentativeVariable=ACP(data)[2]
-        expected_mean=st.number_input(f"Moyenne attendue de la variable {TopRepresentativeVariable} dans la population (requis)")
+        expected_mean=st.number_input(f"Moyenne attendue de la variable quantitative pour la population globale:")
         selected_pairs_dep = get_pairs('combinaison des variables quantitaives /catégorielles')
         if len(selected_pairs_dep)>0:
             results=NonParametricAnova(data,st.session_state.alpha,selected_pairs_dep)
             for result in results: 
                 st.write(result)
             
-        results=NaiveRepresentativenessByMeanTest(data,TopRepresentativeVariable,expected_mean,st.session_state.alpha)
-        st.table(results)
+        st.table(SimpleRepresentativenessBy_T_test(data,expected_mean,st.session_state.alpha))
     else:
-        st.warning("Veuillez saisir les vrais paramètres, car les résultats actuels des tests pour les variables quantitatives ne reflètent pas l'échantillon.")
         checker=validate_hotellingTest_conditions(data)
         selected_pairs_dep = get_pairs('combinaison des variables quantitaives /catégorielles')
         selected_pairs_depCateg = get_pairs('combinaison des variables catégorielles')
-        if checker:
-            # Text input for the vector mean            
-            st.write("Veuillez simplement entrer la moyenne vectorielle attendue de la population, séparée par des virgules (recommandé, par exemple : 1, 2.7, 3, etc.). Ignorez le deuxième formulaire si vous disposez déjà des données d'entrée (vecteur de moyennes). Sinon, il est nécessaire de saisir une valeur de base reflétant la moyenne réelle de la variable suggérée dans l'indication au-dessus du formulaire correspondant.")
-            st.warning("Le vecteur doit contenir un nombre d'éléments égal au nombre de variables quantitatives!")        
-            vector_mean_input = st.text_input('Vecteurs de moyennes attendu de la population')
-
-            # Convert the input string to a list of floats
-            if vector_mean_input:
-                CenterInertia=vector_mean_input.split(',')
-                vector_mean = [float(num) for num in CenterInertia]
-                st.table(tttestmultivariate(data, vector_mean,st.session_state.alpha))
-                if len(selected_pairs_dep)>0:
-                    results=NonParametricAnova(data,st.session_state.alpha,selected_pairs_dep)
-                    for result in results: 
-                        st.write(result)
-                
-                if len(selected_pairs_depCateg)>0:
-                    results=ChiSquareTestForCategVar(data,st.session_state.alpha,selected_pairs_depCateg)
-                    for result in results: 
-                        st.write(result)
-                    
+        # Text input for the vector mean
+        st.write("Veuillez entrer la moyenne vectorielle attendue de la population, séparée par des virgules (par exemple : 1, 2.7, 3.2, etc...). \n Veuillez respecter le même ordre des variables quantitatives continues dans vos données.")
+        st.warning(f"Le vecteur doit contenir un nombre d'éléments égal au nombre de variables quantitatives {nbrQvar}!")
+        vector_mean_input = st.text_input(f"Vecteur des moyennes attendues des {nbrQvar} variables quantitatives pour la population globale:",placeholder='Entrez les {nbrQvar} moyennes séparées par des virgules')        
+        # Convert the input string to a list of floats
+        if vector_mean_input:
+            CenterInertia=vector_mean_input.split(',')
+            vector_mean = [float(num) for num in CenterInertia]
+            if checker:
+               st.table(tttestmultivariate(data, vector_mean,st.session_state.alpha))
             else:
-                    explained_variance,max_contribution,TopRepresentativeVariable=ACP(data)
-                    expected_mean=st.number_input(f"Moyenne attendue de la variable {TopRepresentativeVariable} dans la population (requis)")
-                    results=NaiveRepresentativenessByMeanTest(data,TopRepresentativeVariable,expected_mean,st.session_state.alpha)
-                    st.write(f"● On peut considére que la variable {TopRepresentativeVariable} comme une variable représentative des variables quantitatives, car elle contribue à la construction de la composante principale avec une contribution maximale de {min(100, round(max_contribution * 100, 2))}%, expliquant ainsi la variance maximale ({explained_variance}) de la population par rapport aux autres composantes.")
-                    st.table(results)
-                    if len(selected_pairs_dep)>0:
-                      results=NonParametricAnova(data,st.session_state.alpha,selected_pairs_dep)
-                      for result in results: 
-                        st.write(result)
-                      
-                    if len(selected_pairs_depCateg)>0:
-                      results=ChiSquareTestForCategVar(data,st.session_state.alpha,selected_pairs_depCateg)
-                      for result in results: 
-                        st.write(result)
-                      
-        else:
-            explained_variance,max_contribution,TopRepresentativeVariable=ACP(data)
-            expected_mean=st.number_input(f"Moyenne attendue de la variable {TopRepresentativeVariable} dans la population (requis)", value=50.0)
-            results=NaiveRepresentativenessByMeanTest(data,TopRepresentativeVariable,expected_mean,st.session_state.alpha)
-            st.write(f"● On peut considére que la variable {TopRepresentativeVariable} comme une variable représentative des variables quantitatives, car elle contribue à la construction de la composante principale avec une contribution maximale de {min(100, round(max_contribution * 100, 2))}%, expliquant ainsi la variance maximale ({explained_variance}) de la population par rapport aux autres composantes.")
-            st.table(results)
+               st.table(SimpleRepresentativenessBy_T_test(data,vector_mean,st.session_state.alpha))
             if len(selected_pairs_dep)>0:
-                results=NonParametricAnova(data,st.session_state.alpha,selected_pairs_dep)
-                for result in results: 
-                    st.write(result)
-                
+               results=NonParametricAnova(data,st.session_state.alpha,selected_pairs_dep)
+               for result in results: 
+                  st.write(result)       
             if len(selected_pairs_depCateg)>0:
-                results=ChiSquareTestForCategVar(data,st.session_state.alpha,selected_pairs_depCateg)
-                for result in results: 
-                    st.write(result)
+               results=ChiSquareTestForCategVar(data,st.session_state.alpha,selected_pairs_depCateg)
+               for result in results: 
+                  st.write(result)
+                    
+            # else:
+            #         expected_mean=st.number_input(f"Moyenne attendue de la variable quantitative pour la population globale (requis)")
+            #         st.table(SimpleRepresentativenessBy_T_test(data,expected_mean,st.session_state.alpha))
+            #         if len(selected_pairs_dep)>0:
+            #           results=NonParametricAnova(data,st.session_state.alpha,selected_pairs_dep)
+            #           for result in results: 
+            #             st.write(result)
+                      
+            #         if len(selected_pairs_depCateg)>0:
+            #           results=ChiSquareTestForCategVar(data,st.session_state.alpha,selected_pairs_depCateg)
+            #           for result in results: 
+            #             st.write(result)
+        else:
+            pass             
+        # else:
+        #     vector_mean_input=st.number_input(f"Vecteurs de moyennes attendu de la population (requis)")
+        #     if vector_mean_input:
+        #         CenterInertia=vector_mean_input.split(',')
+        #         vector_mean = [float(num) for num in CenterInertia]
+        #         st.table(SimpleRepresentativenessBy_T_test(data,vector_mean,st.session_state.alpha))
+        #     if len(selected_pairs_dep)>0:
+        #         results=NonParametricAnova(data,st.session_state.alpha,selected_pairs_dep)
+        #         for result in results: 
+        #             st.write(result)
+                
+        #     if len(selected_pairs_depCateg)>0:
+        #         results=ChiSquareTestForCategVar(data,st.session_state.alpha,selected_pairs_depCateg)
+        #         for result in results: 
+        #             st.write(result)
                         
 ####################################################################
 # Le titre de la page et la description
@@ -621,7 +616,7 @@ if data_choice == "Uploader un fichier":
         st.session_state.trigger = trigger
 
 elif data_choice == "Générer des données aléatoires":
-    data_size = st.sidebar.number_input("Taille de l'échantillon", min_value=1800, max_value=8000, value=1800)
+    data_size = st.sidebar.number_input("Taille de l'échantillon", min_value=1800,value=1800)
     nbrQvar= st.sidebar.number_input("le nombre des variables quantitatives à générer", min_value=2, max_value=5)
     nbrCvar= st.sidebar.number_input("le nombre des variables qualitatives à générer", min_value=2, max_value=5)
     alpha = st.sidebar.slider("Niveau de signification (alpha)", min_value=0.01, max_value=0.10, value=0.05, step=0.01)
