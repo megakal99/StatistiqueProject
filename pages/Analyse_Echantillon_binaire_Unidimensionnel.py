@@ -208,7 +208,8 @@ elif data_choice == "Générer des données aléatoires":
 
 expected_mean = st.sidebar.number_input("Moyenne (proportion) attendue de la population", min_value=0.01, max_value=1.0, value=None)
 alpha = st.sidebar.slider("Niveau de signification (alpha)", min_value=0.01, max_value=0.10, value=0.05, step=0.01)
-validate_data_quality()
+if expected_mean and alpha:
+    validate_data_quality()
 button=st.sidebar.button('Analyser')
 if button:
     df1,df2=z_test(mean_sample,expected_mean,sample_size,alpha)
