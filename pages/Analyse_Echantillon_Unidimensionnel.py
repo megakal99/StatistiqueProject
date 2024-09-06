@@ -4,14 +4,20 @@ from scipy import stats
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+import os
 ###############################""
+# Obtenir le répertoire du script actuel
+current_directory = os.path.dirname(__file__)
+# Aller au répertoire parent (répertoire principal)
+main_directory = os.path.abspath(os.path.join(current_directory, '..'))
+# Construire le chemin vers l'icône de manière dynamique à partir du répertoire principal
+favicon_path = os.path.join(main_directory, 'static', 'Stats.png')
+
 st.set_page_config(
     page_title="CheckSampleUnid",
-    page_icon="static/ico.png",  
+    page_icon=favicon_path,   
 )
 
-# Disable warning for Pyplot Global Use
-#st.set_option('deprecation.showPyplotGlobalUse', False)
 ############################################
 def validateDataQuality():
     global data
@@ -110,8 +116,8 @@ def analyze_sample(data, expected_mean, alpha, population_std=None):
         test_result=(
         f"❌ L'hypothèse nulle est rejetée, ce qui démontre de manière significative une différence "
         f"entre la moyenne de l'échantillon et celle de la population. Ainsi, il est évident que "
-        f"l'échantillon n'est pas représentatif, avec une erreur de {round(p_value*100,2)}%"
-        ) if p_value < alpha else (
+        f"l'échantillon n'est pas représentatif, avec une confiance de {100-round(p_value*100,2)}%"
+        ) if p_value <= alpha else (
         f"✅ On ne peut pas rejeter l'hypothèse nulle H0, qui suggère que notre échantillon ne diffère "
         f"pas de manière significative de la population étudiée. Ainsi, nous ne pouvons pas conclure que "
         f"la moyenne de l'échantillon est significativement différente de la moyenne de la population. "
@@ -123,30 +129,30 @@ def analyze_sample(data, expected_mean, alpha, population_std=None):
         test_result=(
         f"❌ L'hypothèse nulle est rejetée, ce qui démontre de manière significative une différence "
         f"entre la moyenne de l'échantillon et celle de la population. Ainsi, il est évident que "
-        f"l'échantillon n'est pas représentatif, avec une erreur de {round(p_value*100,2)}%"
+        f"l'échantillon n'est pas représentatif, avec une confiance de {100-round(p_value*100,2)}%"
         ) if p_value <= alpha else (
         f"✅ On ne peut pas rejeter l'hypothèse nulle H0, qui suggère que notre échantillon ne diffère "
         f"pas de manière significative de la population étudiée. Ainsi, nous ne pouvons pas conclure que "
         f"la moyenne de l'échantillon est significativement différente de la moyenne de la population. "
         f"En d'autres termes, l'échantillon est représentatif!!!"
         )
-        critical_value = round(stats.norm.ppf(1 - alpha / 2),2)
+        critical_value = stats.norm.ppf(1 - alpha / 2)
     # Construct result dictionary
     result1 = {
         "Nbr de l'obseravtions dans l'échantillon":[sample_size],
-        "moyenne de l'échantillon": [mean],
-        "Ecart-Type de l'échantillon": [std_dev],
-        "median de l'échantillon": [median],
-        "percentile_25 de l'échantillon": [percentile_25],
-        "percentile_75 de l'échantillon": [percentile_75],
-        "max de l'échantillon": [max_val],
-        "min de l'échantillon": [min_val]
+        "moyenne de l'échantillon": [f'{round(mean,2)}'],
+        "Ecart-Type de l'échantillon": [f'{round(std_dev,2)}'],
+        "median de l'échantillon": [f'{round(median,2)}'],
+        "percentile_25 de l'échantillon": [f'{round(percentile_25,2)}'],
+        "percentile_75 de l'échantillon": [f'{round(percentile_75,2)}'],
+        "max de l'échantillon": [f'{round(max_val,2)}'],
+        "min de l'échantillon": [f'{round(min_val,2)}']
     }
     result2={
-            "test_statistic": [t_stat] if population_std is None else [z_stat],
+            "test_statistic": [f'{round(t_stat,2)}'] if population_std is None else [f'{round(z_stat,2)}'],
             "p_value": [f'{round(p_value*100,2)}%'],
-            "alpha": [f'{round(alpha*100,2)}%'],
-            "critical_value": [critical_value],
+            "alpha": [f'{alpha*100}%'],
+            "critical_value": [f'{round(critical_value,2)}'],
             "interval de confiance":[f"[{round(ci_lower,2)},{round(ci_upper,2)}]"],
             "test_result": [test_result]
         }

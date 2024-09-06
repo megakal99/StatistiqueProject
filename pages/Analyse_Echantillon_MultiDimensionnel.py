@@ -5,18 +5,25 @@ from scipy.stats import kruskal,ttest_1samp,chi2_contingency
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
-import random,itertools
+import random,itertools,os
 ###############################""
+# Obtenir le répertoire du script actuel
+current_directory = os.path.dirname(__file__)
+# Aller au répertoire parent (répertoire principal)
+main_directory = os.path.abspath(os.path.join(current_directory, '..'))
+# Construire le chemin vers l'icône de manière dynamique à partir du répertoire principal
+favicon_path = os.path.join(main_directory, 'static', 'Stats.png')
+
 st.set_page_config(
     page_title="CheckSampleMultiDim",
-    page_icon="static/ico.png",  
+    page_icon=favicon_path,   
 )
 
 ###################################
 numeric_columnsList=[]
 Categorical_variables=[]
 p=0.5
-## Estimation de la taille d'échantillon en général dans le cas plus rare
+## Estimation de la taille d'échantillon optimale dans le cas idéal où 50% des observations sont 0 et 50% sont 1
 estimated_sample_size=int((1.96**2)*p*(1-p)/(0.05**2))
 ################################
 def generate_multidimensional_data(size, nbrQvar, nbrCvar):
@@ -30,12 +37,12 @@ def generate_multidimensional_data(size, nbrQvar, nbrCvar):
 
     Returns:
         pd.DataFrame: DataFrame contenant les données générées.
-        list: Vecteur représentant les moyennes attendues des variables quantitatives.
+        list: Vecteur représentant les moyennes attendues (hypothétiques) des variables quantitatives dans la population globale.
     """
     num_quantitative = nbrQvar
     num_categorical = nbrCvar
     
-    # Vecteur des moyennes des données quantitatives attendues, reflétant la moyenne de la population théorique ou pratique
+    # Vecteur des moyennes des données quantitatives attendues, reflétant la moyenne de la population théorique ou hypothétique
     vectAverage = [random.uniform(0.1, 2.7)] * nbrQvar
     
     # Générer des variables quantitatives (en supposant qu'elles suivent une distribution normale)
@@ -67,15 +74,7 @@ def validateData():
         RuntimeError: Si l'une des conditions de validation n'est pas satisfaite, une erreur est affichée et l'exécution est arrêtée.
 
     """
-    global data
     # Vérifier si le nombre d'observations est suffisant
-    if data.shape[0]>8000:
-        #st.warning(f"Vous avez téléchargé un échantillon contenant plus de 8000 observations, ce qui pourrait entraîner une surcharge du serveur. Un sous-échantillon aléatoire contenant 8000 observations a été pris.")
-        # Générer un nombre aléatoire de lignes entre 2000 et 8000
-        #subset_size = np.random.randint(2000, 8001)
-        # Sélectionner aléatoirement un sous-ensemble de données à partir l'échantillon
-        #data = data.sample(n=8000)
-        pass
     if data.shape[0] < estimated_sample_size:
         st.error(f"Le nombre d'observations doit être au moins égal à la taille d'échantillon estimée : {estimated_sample_size}, pour garantir la significativité de l'analyse.")
         st.stop()
@@ -175,59 +174,22 @@ def tttestmultivariate(X, null_hypothesis_means,alpha):
     """
     st.subheader("Résultat du test de représentativité de la population pour variable(s) quantitative(s)")
     result = pg.multivariate_ttest(X[st.session_state.Qvars], Y=null_hypothesis_means)
-    T2 = round(result['T2'][0],2)
-    F = round(result['F'][0],2)
-    p_value = round(result['pval'][0],2)
+    T2 = result['T2'][0]
+    F = result['F'][0]
+    p_value = result['pval'][0]
     interpretation=(
         f"❌ L'hypothèse nulle est rejetée, ce qui démontre de manière significative une différence "
         f"entre la moyenne de l'échantillon et celle de la population. Ainsi, il est évident que "
-        f"l'échantillon n'est pas représentatif, avec une erreur de {p_value*100}%"
-        ) if p_value < alpha else (
+        f"l'échantillon n'est pas représentatif, avec une confiance de {100-p_value*100}%"
+        ) if p_value <= alpha else (
         f"✅ On ne peut pas rejeter l'hypothèse nulle H0, qui suggère que notre échantillon ne diffère "
-        f"pas de manière significative de la population étudiée. Ainsi, nous ne pouvons pas conclure que "
-        f"la moyenne de l'échantillon est significativement différente de la moyenne de la population. "
-        f"En d'autres termes, l'échantillon est représentatif en termes de caractéristiques quantitatives!!!"
+        f" pas de manière significative de la population étudiée. Ainsi, nous ne pouvons pas conclure que "
+        f" la moyenne de l'échantillon est significativement différente de la moyenne de la population. "
+        f" En d'autres termes, l'échantillon est représentatif en termes de caractéristiques quantitatives!!!"
         )
-    results=pd.DataFrame({'T2':[T2],'F':[F],'p_value':[f'{p_value*100}%'],'alpha':[f'{alpha*100}%'],'Interprétation':[interpretation]})
+    results=pd.DataFrame({'T2':[f'{round(T2,2)}'],'F':[f'{round(F,2)}'],'p_value':[f'{round(p_value*100,2)}%'],'alpha':[f'{alpha*100}%'],'Interprétation':[interpretation]})
     return results
     
-#######################################################################
-# def ACP(X):
-#     """
-#     Effectue une Analyse en Composantes Principales (ACP) sur un ensemble de données X.
-
-#     Args:
-#         X (pd.DataFrame): Le DataFrame contenant les données numériques à analyser.
-
-#     Returns:
-#         str: Pourcentage de la variance expliquée par le premier composant principal.
-#         float: La contribution maximale d'une variable au premier composant principal.
-#         str: Le nom de la variable ayant la plus grande contribution au premier composant principal.
-#     """
-#     # Sélectionner les colonnes numériques à inclure dans l'ACP
-#     numeric_columnsList = st.session_state.Qvars
-#     col = list(X[numeric_columnsList].columns)
-
-#     # Standardisation des données
-#     scaler = StandardScaler()
-#     df_standardized = pd.DataFrame(scaler.fit_transform(X[numeric_columnsList]), columns=col)
-
-#     # Appliquer l'analyse en composantes principales (PCA)
-#     pca = PCA(n_components=3)
-#     pca.fit(df_standardized)
-
-#     # Obtenir la variance expliquée par le premier composant principal
-#     explained_variance = pca.explained_variance_ratio_
-
-#     # Obtenir les contributions de chaque variable aux composantes principales
-#     loadings_df = pd.DataFrame(pca.components_.T, columns=['PC1_vector','PC2_vector','PC3_vector'], index=col)
-#     loadings_df = loadings_df * np.sqrt(pca.explained_variance_)
-
-#     # Calculer la contribution maximale et la variable correspondante
-#     max_contribution = abs(loadings_df).max(axis=0)[0]
-#     TopRepresentativeVariable = abs(loadings_df).idxmax(axis=0)[0]
-
-#     return f'{round(explained_variance[0],2)*100}%', max_contribution, TopRepresentativeVariable
 #######################################################################
 def SimpleRepresentativenessBy_T_test(X, expected_mean, alpha):
     """
@@ -241,40 +203,66 @@ def SimpleRepresentativenessBy_T_test(X, expected_mean, alpha):
         pd.DataFrame: Un DataFrame contenant les résultats du test.
     """
     st.subheader("Résultat du test de représentativité de la population pour variable(s) quantitative(s)")
+
     # Sélectionner les colonnes numériques à inclure dans le test
     numeric_columnsList = st.session_state.Qvars
-    columns = list(X[numeric_columnsList].columns)
-    t_stats,p_values,alphas,Interprétations=[],[],len(columns)*[f'{round(alpha*100, 2)}%'],[]
-    # Effectuer le test t de Student pour une seule population
-    for i,nom_variable in enumerate(columns):
-        if len(columns)==1:
-            t_stat, p_value = ttest_1samp(X[nom_variable], expected_mean)
+    
+    # Initialisation des listes pour stocker les résultats du test
+    t_stats, alphas, interpretations = [], [], []
+    # Dictionnaire pour stocker les p-values
+    p_values_dict = {}
+
+    # Effectuer le test t de Student pour chaque variable
+    for i, var_name in enumerate(numeric_columnsList):
+        # Si une seule colonne, la moyenne attendue est un scalaire
+        if len(numeric_columnsList) == 1:
+            t_stat, p_value = ttest_1samp(X[var_name], expected_mean)
         else:
-            t_stat, p_value = ttest_1samp(X[nom_variable], expected_mean[i])
+            # Sinon, la moyenne attendue est une liste de moyennes
+            t_stat, p_value = ttest_1samp(X[var_name], expected_mean[i])
+
+        t_stats.append(f'{round(t_stat,2)}')
+        p_values_dict[var_name] = p_value
+
+    # Trier le dictionnaire des p-values par ordre croissant
+    sorted_p_values = {k: v for k, v in sorted(p_values_dict.items(), key=lambda item: item[1])}
+    m = len(sorted_p_values)
+    count = 0
+
+    # Appliquer la correction de Holm-Bonferroni et interpréter les résultats
+    for i, (var_name, p_value) in enumerate(sorted_p_values.items()):
+        alpha_corrected = alpha / (m -i)  # Correction de alpha (Holm-Bonferroni)
+        alphas.append(f'{round(alpha_corrected * 100, 2)}%')
+        count += 1 if p_value > alpha_corrected else 0 
         
         # Interpréter le résultat du test en fonction du p-value et du niveau de signification alpha
         test_result = (
-            f"❌ L'hypothèse nulle est rejetée. Il existe une différence significative entre la moyenne de la variable dans l'échantillon"
-            f"et celle de la population avec une erreur de {round(p_value*100, 2)}%. Par conséquent, la variable dans "
+            f"❌ L'hypothèse nulle est rejetée pour la variable {var_name}. Il existe une différence significative entre la moyenne de la variable dans l'échantillon "
+            f"et celle de la population avec une confiance de {100-round(p_value*100, 2)}%. Par conséquent, la variable dans "
             f"l'échantillon n'est pas représentative de la même variable dans la population."
-        ) if p_value < alpha else (
-            f"✅ L'hypothèse nulle H0 ne peut pas être rejetée. Cela suggère que la variable dans l'échantillon ne diffère pas de manière "
+        ) if p_value <= alpha_corrected else (
+            f"✅ L'hypothèse nulle H0 acceptée pour la variable {var_name}. Cela suggère que la variable dans l'échantillon ne diffère pas de manière "
             f"significative de la même variable dans la population étudiée. Ainsi, nous pouvons conclure que la variable dans l'échantillon est représentative de celle dans la population."
         )
-        # Ajoutez les résultats du test aux listes concernées.
-        t_stats.append(t_stat)
-        p_values.append(f'{round(p_value*100, 2)}%')
-        Interprétations.append(test_result)
+
+        interpretations.append(test_result)
 
     # Créer un DataFrame pour stocker les résultats du test
     results = pd.DataFrame({
-        't_stat': t_stats,
-        'p_value': p_values,
+        'Variable': list(sorted_p_values.keys()),
+        't_stat': [t_stats[numeric_columnsList.index(var)] for var in sorted_p_values.keys()],
+        'p_value': [f'{round(sorted_p_values[var] * 100, 2)}%' for var in sorted_p_values.keys()],
         'alpha': alphas,
-        'Interprétation': Interprétations
-    },index=columns)
+        'Interprétation': interpretations
+    })
+
+    # Conclusion finale
+    if len(numeric_columnsList)==1: 
+        FinalResult = f"➤ La variable quantitative {numeric_columnsList[0]} de l'échantillon représente celle de la population à {round(100 * (count / len(numeric_columnsList)), 2)}%."
+    else:
+        FinalResult = f"➤ Les variables quantitatives de l'échantillon représentent celles de la population à {round(100 * (count / len(numeric_columnsList)), 2)}%."
     
-    return results
+    return results, FinalResult
 ############################################################################
 def NonParametricAnova(X, alpha, ListofPairs):
     """
@@ -300,8 +288,8 @@ def NonParametricAnova(X, alpha, ListofPairs):
         pvalue = kruskal(*grouped_data)[1]
         
         # Interpréter les résultats en fonction du niveau de signification alpha
-        if pvalue < alpha:
-            check.append(f"✅ La variable catégorielle '{Vars[1]}' a un effet significatif sur la variable quantitative '{Vars[0]}'.")
+        if pvalue <= alpha:
+            check.append(f"✅ La variable catégorielle '{Vars[1]}' a un effet significatif sur la variable quantitative '{Vars[0]}', avec une confiance de {100-round(pvalue*100, 2)}%.")
         else:
             check.append(f"❌ La variable catégorielle '{Vars[1]}' n'a pas d'effet significatif sur la variable quantitative '{Vars[0]}'.")
     
@@ -331,8 +319,8 @@ def ChiSquareTestForCategVar(X, alpha, ListofPairs):
         pvalue = chi2_contingency(contingency_table)[1]
 
         # Interpréter les résultats en fonction du niveau de signification alpha
-        if pvalue < alpha:
-            check.append(f"✅ Il y a des preuves significatives montrant que '{Cvars[0]}' et '{Cvars[1]}' sont liés ou dépendants.")
+        if pvalue <= alpha:
+            check.append(f"✅ Il y a des preuves significatives montrant que '{Cvars[0]}' et '{Cvars[1]}' sont liés ou dépendants, avec une confiance de {100-round(pvalue*100, 2)}%.")
         else:
             check.append(f"❌ Il n'y a pas de preuve significative de dépendance ou de relation entre '{Cvars[0]}' et '{Cvars[1]}'.")
 
@@ -373,13 +361,17 @@ def descriptive_statistics(X, nbrQvar, nbrCvar):
     Returns:
         None
     """
-    # Initialize an empty dictionary to store results
     statistics = {}
-    
     if nbrQvar > 0:
-        # Numeric variables
+
         numeric_stats = X.describe().transpose()
-        # Renaming columns
+        # Convertir les valeurs en chaînes de caractères formatées avec 2 décimales
+        for col in numeric_stats.columns:
+            if col=='count':
+                numeric_stats[col] = numeric_stats[col].apply(lambda x: int(x))
+            else:
+                numeric_stats[col] = numeric_stats[col].apply(lambda x: f'{x:.2f}')
+        # Renommer les colonnes
         numeric_stats.rename(columns={
             '25%': '25e percentile',
             '50%': 'median',
@@ -395,15 +387,20 @@ def descriptive_statistics(X, nbrQvar, nbrCvar):
         st.table(df)
 
     if nbrCvar > 0:
-        # Categorical variables
         categorical_cols = st.session_state.Cvars
         X[categorical_cols] = X[categorical_cols].astype(str)
-        categorical_stats = X[categorical_cols].apply(lambda x: x.value_counts(normalize=True))
-        # Créer un dictionnaire pour stocker toutes les statistiques
-        statistics['Variables Catégorielles'] = categorical_stats.to_dict()
-        
-        st.subheader("Variables Qualitatives")
-        st.table(pd.DataFrame(statistics['Variables Catégorielles']))
+        categorical_stats = X[categorical_cols].apply(lambda x: x.value_counts(normalize=True)*100)
+        categorical_stats = categorical_stats.stack().reset_index()
+        categorical_stats.columns = ['Catégorie','Variable','Proportion']
+        categorical_stats.sort_values(by=['Variable'], inplace=True)
+        categorical_stats['Proportion'] = categorical_stats['Proportion'].apply(lambda x: f'{x:.2f}%')
+        for col in categorical_cols:
+            proportion_data = categorical_stats[categorical_stats['Variable'] == col]
+            proportion_data=proportion_data[['Catégorie','Proportion']]
+            proportion_data=proportion_data.reset_index(drop=True)
+            # Afficher les resultats d'analyse descriptive
+            st.subheader(f"Proportion de chaque catégorie de la variable Categoriélle {col}")
+            st.table(proportion_data)
 
 #############################################################
 def displayCorrMatrix(X, nbrQvar):
@@ -489,51 +486,64 @@ def HandlePossibleCases(data):
             for result in results: 
                 st.write(result)
     elif nbrQvar>=2 and nbrCvar==0:
-        checker=validate_hotellingTest_conditions(data)
-        # Text input for the vector mean
+        # Condition pour éviter le problem sur memoire au cas d'un grand echantillon (>8000 )
+        if data.shape[0]<=8000:
+            checker=validate_hotellingTest_conditions(data)
+        else:
+            checker=False
         st.write("Veuillez entrer la moyenne vectorielle attendue de la population, séparée par des virgules (par exemple : 1, 2.7, 3.2, etc...). \n Veuillez respecter le même ordre des variables quantitatives continues dans vos données.")
         st.warning(f"Le vecteur doit contenir un nombre d'éléments égal au nombre de variables quantitatives {nbrQvar}!")
-        vector_mean_input = st.text_input(f"Vecteur des moyennes attendues des {nbrQvar} variables quantitatives pour la population globale:",placeholder='Entrez les {nbrQvar} moyennes séparées par des virgules')        
-        # Convert the input string to a list of floats
+        vector_mean_input = st.text_input(f"Vecteur des moyennes attendues des {nbrQvar} variables quantitatives pour la population globale:")        
+        # Convertir les données d'entrée de chaînes de caractères en une liste de valeurs réelles
         if vector_mean_input:
             CenterInertia=vector_mean_input.split(',')
             vector_mean = [float(num) for num in CenterInertia]
             if checker:
                st.table(tttestmultivariate(data, vector_mean,st.session_state.alpha))
             else:
-               st.table(SimpleRepresentativenessBy_T_test(data,vector_mean,st.session_state.alpha))
+               results,finalResult=SimpleRepresentativenessBy_T_test(data,vector_mean,st.session_state.alpha)
+               st.table(results)
+               st.write(finalResult)
         else:
             pass
-            # TopRepresentativeVariable=ACP(data)[2]
-            # expected_mean=st.number_input(f"Moyenne attendue de la variable {TopRepresentativeVariable} dans la population (requis)")
-            # results=NaiveRepresentativenessByMeanTest(data,TopRepresentativeVariable,expected_mean,st.session_state.alpha)
-            # st.write(f"● On peut considére que la variable {TopRepresentativeVariable} comme une variable représentative des variables quantitatives, car elle contribue à la construction de la composante principale avec une contribution maximale de {min(100, round(max_contribution * 100, 2))}%, expliquant ainsi la variance maximale ({explained_variance}) de la population par rapport aux autres composantes.")
-            # st.table(results)
-    elif nbrQvar==1 and nbrCvar==1:
+            
+    elif nbrQvar==1 and nbrCvar>=1:
         expected_mean=st.number_input(f"Moyenne attendue de la variable quantitative pour la population globale:")
         selected_pairs_dep = get_pairs('combinaison des variables quantitaives /catégorielles')
-        if len(selected_pairs_dep)>0:
-            results=NonParametricAnova(data,st.session_state.alpha,selected_pairs_dep)
-            for result in results: 
-                st.write(result)
-            
-        st.table(SimpleRepresentativenessBy_T_test(data,expected_mean,st.session_state.alpha))
+        selected_pairs_depCateg = get_pairs('combinaison des variables catégorielles')
+        if expected_mean:
+            results,finalResult=SimpleRepresentativenessBy_T_test(data,expected_mean,st.session_state.alpha)
+            st.table(results)
+            st.write(finalResult)
+            if len(selected_pairs_dep)>0:
+               results=NonParametricAnova(data,st.session_state.alpha,selected_pairs_dep)
+               for result in results: 
+                  st.write(result)
+            if len(selected_pairs_depCateg)>0:
+               results=ChiSquareTestForCategVar(data,st.session_state.alpha,selected_pairs_depCateg)
+               for result in results: 
+                  st.write(result)
     else:
-        checker=validate_hotellingTest_conditions(data)
+        # Condition pour éviter le problem sur memoire au cas d'un grand echantillon (>8000 )
+        if data.shape[0]<=8000:
+            checker=validate_hotellingTest_conditions(data)
+        else:
+            checker=False
         selected_pairs_dep = get_pairs('combinaison des variables quantitaives /catégorielles')
         selected_pairs_depCateg = get_pairs('combinaison des variables catégorielles')
-        # Text input for the vector mean
         st.write("Veuillez entrer la moyenne vectorielle attendue de la population, séparée par des virgules (par exemple : 1, 2.7, 3.2, etc...). \n Veuillez respecter le même ordre des variables quantitatives continues dans vos données.")
         st.warning(f"Le vecteur doit contenir un nombre d'éléments égal au nombre de variables quantitatives {nbrQvar}!")
-        vector_mean_input = st.text_input(f"Vecteur des moyennes attendues des {nbrQvar} variables quantitatives pour la population globale:",placeholder='Entrez les {nbrQvar} moyennes séparées par des virgules')        
-        # Convert the input string to a list of floats
+        vector_mean_input = st.text_input(f"Vecteur des moyennes attendues des {nbrQvar} variables quantitatives pour la population globale:")        
+        # Convertir les données d'entrée de chaînes de caractères en une liste de valeurs réelles
         if vector_mean_input:
             CenterInertia=vector_mean_input.split(',')
             vector_mean = [float(num) for num in CenterInertia]
             if checker:
                st.table(tttestmultivariate(data, vector_mean,st.session_state.alpha))
             else:
-               st.table(SimpleRepresentativenessBy_T_test(data,vector_mean,st.session_state.alpha))
+               results,finalResult=SimpleRepresentativenessBy_T_test(data,vector_mean,st.session_state.alpha)
+               st.table(results)
+               st.write(finalResult)
             if len(selected_pairs_dep)>0:
                results=NonParametricAnova(data,st.session_state.alpha,selected_pairs_dep)
                for result in results: 
@@ -543,35 +553,8 @@ def HandlePossibleCases(data):
                for result in results: 
                   st.write(result)
                     
-            # else:
-            #         expected_mean=st.number_input(f"Moyenne attendue de la variable quantitative pour la population globale (requis)")
-            #         st.table(SimpleRepresentativenessBy_T_test(data,expected_mean,st.session_state.alpha))
-            #         if len(selected_pairs_dep)>0:
-            #           results=NonParametricAnova(data,st.session_state.alpha,selected_pairs_dep)
-            #           for result in results: 
-            #             st.write(result)
-                      
-            #         if len(selected_pairs_depCateg)>0:
-            #           results=ChiSquareTestForCategVar(data,st.session_state.alpha,selected_pairs_depCateg)
-            #           for result in results: 
-            #             st.write(result)
         else:
             pass             
-        # else:
-        #     vector_mean_input=st.number_input(f"Vecteurs de moyennes attendu de la population (requis)")
-        #     if vector_mean_input:
-        #         CenterInertia=vector_mean_input.split(',')
-        #         vector_mean = [float(num) for num in CenterInertia]
-        #         st.table(SimpleRepresentativenessBy_T_test(data,vector_mean,st.session_state.alpha))
-        #     if len(selected_pairs_dep)>0:
-        #         results=NonParametricAnova(data,st.session_state.alpha,selected_pairs_dep)
-        #         for result in results: 
-        #             st.write(result)
-                
-        #     if len(selected_pairs_depCateg)>0:
-        #         results=ChiSquareTestForCategVar(data,st.session_state.alpha,selected_pairs_depCateg)
-        #         for result in results: 
-        #             st.write(result)
                         
 ####################################################################
 # Le titre de la page et la description
@@ -616,7 +599,7 @@ if data_choice == "Uploader un fichier":
         st.session_state.trigger = trigger
 
 elif data_choice == "Générer des données aléatoires":
-    data_size = st.sidebar.number_input("Taille de l'échantillon", min_value=1800,value=1800)
+    data_size = st.sidebar.number_input("Taille de l'échantillon", min_value=1800,max_value=8000,value=1800)
     nbrQvar= st.sidebar.number_input("le nombre des variables quantitatives à générer", min_value=2, max_value=5)
     nbrCvar= st.sidebar.number_input("le nombre des variables qualitatives à générer", min_value=2, max_value=5)
     alpha = st.sidebar.slider("Niveau de signification (alpha)", min_value=0.01, max_value=0.10, value=0.05, step=0.01)
@@ -629,7 +612,6 @@ elif data_choice == "Générer des données aléatoires":
     st.session_state.Cvars = Categorical_variables
     st.session_state.trigger = trigger
 
-#button=st.sidebar.button('Analyser',key='button0')
 if st.session_state.trigger:
     DispalyStats(st.session_state.data,len(st.session_state.Qvars),len(st.session_state.Cvars))
     

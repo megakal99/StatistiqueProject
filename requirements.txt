@@ -6,5 +6,4 @@ statsmodels
 matplotlib
 openpyxl
 seaborn
-scikit-learn
 pingouin

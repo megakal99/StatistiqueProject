@@ -4,14 +4,19 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
+import os
 #################################
+# Obtenir le répertoire du script actuel
+current_directory = os.path.dirname(__file__)
+# Aller au répertoire parent (répertoire principal)
+main_directory = os.path.abspath(os.path.join(current_directory, '..'))
+# Construire le chemin vers l'icône de manière dynamique à partir du répertoire principal
+favicon_path = os.path.join(main_directory, 'static', 'Stats.png')
+
 st.set_page_config(
     page_title="CheckSampleUnidBinary",
-    page_icon="static/ico.png",  
+    page_icon=favicon_path,  
 )
-
-# Disable warning for Pyplot Global Use
-#st.set_option('deprecation.showPyplotGlobalUse', False)
 ###################################################""
 mean_sample=None
 sample_size=None
@@ -74,7 +79,7 @@ def HandleBinaryCategVariable(data):
         pass
     else:
         values =list(unique_values)
-        st.warning("Les données ne semblent pas être directement binaires (0 et 1), mais plutôt modalités, comme par exemple 'Marié/Non Marié' ou 'Vrai/Faux', etc. veuillez les changer par 0 et 1")
+        st.warning(f"Les données ne semblent pas être directement binaires (0 et 1), mais plutôt modalités {values}. veuillez les changer par 0 et 1")
         checker=0
    
     return checker
@@ -118,8 +123,8 @@ def z_test(sample_prop, population_prop, sample_size, alpha=0.05):
     test_result = (
     f"❌ L'hypothèse nulle est rejetée, ce qui démontre de manière significative une différence "
     f"entre la proportion de l'échantillon et celle de la population. Ainsi, il est évident que "
-    f"l'échantillon n'est pas représentatif, avec une erreur de {round(p_value*100,2)}%"
-    ) if p_value < alpha else (
+    f"l'échantillon n'est pas représentatif, avec une confiance de {100-round(p_value*100,2)}%"
+    ) if p_value <= alpha else (
     f"✅ On ne peut pas rejeter l'hypothèse nulle H0, qui suggère que notre échantillon ne diffère "
     f"pas de manière significative de la population étudiée. Ainsi, nous ne pouvons pas conclure que "
     f"la proportion de l'échantillon est significativement différente de la proportion de la population. "
