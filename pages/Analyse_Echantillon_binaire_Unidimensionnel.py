@@ -29,6 +29,8 @@ def validate_data_quality():
     else:
         pass
     ## Estimation de la taille d'échantillon optimale dans le cas idéal où 50% des observations sont 0 et 50% sont 1
+    expected_mean = st.sidebar.number_input("Moyenne (proportion) attendue de la population", min_value=0.01, max_value=1.0, value=None)
+
     estimated_sample_size=int((1.96**2)*float(expected_mean)*(1-float(expected_mean))/(0.05**2))
     st.warning(f"La taille d'echantillon significative : {estimated_sample_size}")
 
