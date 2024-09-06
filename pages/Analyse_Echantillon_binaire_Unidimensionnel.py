@@ -27,10 +27,10 @@ def validate_data_quality():
         data = data.T
     else:
         pass
-    p=0.5
     ## Estimation de la taille d'échantillon optimale dans le cas idéal où 50% des observations sont 0 et 50% sont 1
     estimated_sample_size=int((1.96**2)*expected_mean*(1-expected_mean)/(0.05**2))
-    
+    st.error(f"La taille d'echantillon significative : {estimated_sample_size}")
+
     if data.shape[0]<estimated_sample_size:
         st.error(f"Le nombre d'observations doit être supérieur à la taille significative : {estimated_sample_size} pour garantir la significativité de l'analyse en vertu du théorème central limite.")
         st.stop()
