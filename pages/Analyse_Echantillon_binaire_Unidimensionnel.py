@@ -29,8 +29,7 @@ def validate_data_quality():
     else:
         pass
     ## Estimation de la taille d'échantillon optimale dans le cas idéal où 50% des observations sont 0 et 50% sont 1
-    expected_mean = st.sidebar.number_input("Moyenne (proportion) attendue de la population", min_value=0.01, max_value=1.0, value=None)
-
+    global expected_mean
     estimated_sample_size=int((1.96**2)*float(expected_mean)*(1-float(expected_mean))/(0.05**2))
     st.warning(f"La taille d'echantillon significative : {estimated_sample_size}")
 
@@ -197,7 +196,7 @@ if data_choice == "Uploader un fichier":
             
         elif uploaded_file.name.endswith('.xlsx'):
             data = pd.read_excel(uploaded_file, engine='openpyxl')
-            validate_data_quality()
+            #validate_data_quality()
         else:
             st.error("Le format de fichier n'est pas pris en charge.")
             st.stop()
@@ -205,11 +204,11 @@ if data_choice == "Uploader un fichier":
 elif data_choice == "Générer des données aléatoires":
     data_size = st.sidebar.number_input("Taille de l'échantillon", min_value=30, max_value=50000, value=100)
     data=generate_binary_dataframe((data_size,1))
-    validate_data_quality()
+    #validate_data_quality()
 
 expected_mean = st.sidebar.number_input("Moyenne (proportion) attendue de la population", min_value=0.01, max_value=1.0, value=None)
 alpha = st.sidebar.slider("Niveau de signification (alpha)", min_value=0.01, max_value=0.10, value=0.05, step=0.01)
-
+validate_data_quality()
 button=st.sidebar.button('Analyser')
 if button:
     df1,df2=z_test(mean_sample,expected_mean,sample_size,alpha)
