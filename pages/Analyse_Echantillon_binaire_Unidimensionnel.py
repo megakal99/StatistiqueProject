@@ -19,6 +19,7 @@ st.set_page_config(
 )
 
 ###################################################""
+expected_mean=0.1
 mean_sample=None
 sample_size=None
 def validate_data_quality():
@@ -28,7 +29,7 @@ def validate_data_quality():
     else:
         pass
     ## Estimation de la taille d'échantillon optimale dans le cas idéal où 50% des observations sont 0 et 50% sont 1
-    estimated_sample_size=int((1.96**2)*expected_mean*(1-expected_mean)/(0.05**2))
+    estimated_sample_size=int((1.96**2)*float(expected_mean)*(1-float(expected_mean))/(0.05**2))
     st.warning(f"La taille d'echantillon significative : {estimated_sample_size}")
 
     if data.shape[0]<estimated_sample_size:
