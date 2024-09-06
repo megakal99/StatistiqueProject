@@ -33,10 +33,10 @@ def validate_data_quality():
     estimated_sample_size=int((1.96**2)*float(expected_mean)*(1-float(expected_mean))/(0.05**2))
     st.warning(f"La taille d'echantillon significative : {estimated_sample_size}")
 
-    if data.shape[0]<estimated_sample_size:
-        st.error(f"Le nombre d'observations doit être supérieur à la taille significative : {estimated_sample_size} pour garantir la significativité de l'analyse en vertu du théorème central limite.")
-        st.stop()
-    elif data.shape[1] != 1:
+    #if data.shape[0]<estimated_sample_size:
+        #st.error(f"Le nombre d'observations doit être supérieur à la taille significative : {estimated_sample_size} pour garantir la significativité de l'analyse en vertu du théorème central limite.")
+        #st.stop()
+    if data.shape[1] != 1:
         st.error("Le nombre de variables (colonnes) est supérieur à 1. Cette analyse est unidimensionnelle. Veuillez utiliser un jeu de données contenant une seule variable numérique continue!")
         st.stop()
     elif data.isnull().sum().sum()>0:
