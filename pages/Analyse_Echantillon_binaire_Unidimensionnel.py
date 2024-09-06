@@ -17,6 +17,7 @@ st.set_page_config(
     page_title="CheckSampleUnidBinary",
     page_icon=favicon_path,  
 )
+
 ###################################################""
 mean_sample=None
 sample_size=None
@@ -26,8 +27,12 @@ def validate_data_quality():
         data = data.T
     else:
         pass
-    if data.shape[0]<30:
-        st.error("Le nombre d'observations doit être supérieur à 30 pour garantir la significativité de l'analyse en vertu du théorème central limite.")
+    p=0.5
+    ## Estimation de la taille d'échantillon optimale dans le cas idéal où 50% des observations sont 0 et 50% sont 1
+    estimated_sample_size=int((1.96**2)*expected_mean*(1-expected_mean)/(0.05**2))
+    
+    if data.shape[0]<estimated_sample_size:
+        st.error(f"Le nombre d'observations doit être supérieur à la taille significative : {estimated_sample_size} pour garantir la significativité de l'analyse en vertu du théorème central limite.")
         st.stop()
     elif data.shape[1] != 1:
         st.error("Le nombre de variables (colonnes) est supérieur à 1. Cette analyse est unidimensionnelle. Veuillez utiliser un jeu de données contenant une seule variable numérique continue!")
