@@ -286,6 +286,10 @@ def findRepresentativeSubSample(data,population_prop, alpha=0.05, max_iterations
     - population_prop (float) : Proportion de la population (la fréquence des valeurs 1 estimée ou réelle).
     - alpha (float) : Niveau de signification pour les tests (par défaut, 0.05 pour un intervalle de confiance de 95 %).
     - max_iterations (int) : Nombre maximum d'itérations (par défaut, 100).
+
+    Retourne:
+    bool: 1 si le résultat du test est positif sinon 0
+    sub_sample_prop: Proportion du sous-échantillon (la fréquence des valeurs 1 estimée ou réelle)
     """
     sample_size = data.shape[0]
     is_representative=None
@@ -325,10 +329,15 @@ def findRepresentativeSubSample(data,population_prop, alpha=0.05, max_iterations
                     mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                     key='DownloadButton'
                     )
-                break
+                return 1,sub_sample_prop
+            else:
+                if i==99:
+                   return 0,sub_sample_prop
+                else:
+                   pass
                 
     else:
-        pass
+        return 0,sub_sample_prop
                 
 #############################################################################
 def plot_binary_distribution_pie(data):
@@ -394,7 +403,15 @@ if button:
     plot_binary_distribution_pie(data)
 
     if "❌" in df2['test_result'][0]:
-        findRepresentativeSubSample(data,population_expected_mean, alpha)
+        verf,sub_sample_prop=findRepresentativeSubSample(data,population_expected_mean, alpha)
+        st.header('Conclusion générale')
+        if verf:
+           st.write(f"L'extrapolation des résultats fournis par cet échantillon sur la population totale devrait être faite en se référant à la moyenne ou la proportion de sous-échantillon {sub_sample_prop}, sous réserve de confirmation de la représentativité de l'échantillon à travers une analyse multidimensionnelle.")
+        else:
+           st.write(f"L'extrapolation des résultats fournis par cet échantillon n'est pas possible.")
+ 
     else:
-        pass
+        st.header('Conclusion générale')
+        st.write(f"L'extrapolation des résultats fournis par cet échantillon sur la population totale devrait être faite en se référant à la moyenne de l'échantillon {mean_sample}, sous réserve de confirmation de la représentativité de l'échantillon à travers une analyse multidimensionnelle.")
+        
 
