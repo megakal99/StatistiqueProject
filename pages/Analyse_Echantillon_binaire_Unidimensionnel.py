@@ -406,12 +406,12 @@ if button:
         verf,sub_sample_prop=findRepresentativeSubSample(data,population_expected_mean, alpha)
         st.header('Conclusion générale')
         if verf:
-           st.write(f"L'extrapolation des résultats fournis par cet échantillon sur la population totale devrait être faite en se référant à la moyenne ou la proportion de sous-échantillon {sub_sample_prop}, sous réserve de confirmation de la représentativité de l'échantillon à travers une analyse multidimensionnelle.")
+           st.write(f"L'extrapolation des résultats fournis par cet échantillon sur la population totale devrait être faite en se référant à la moyenne ou la proportion de sous-échantillon {round(sub_sample_prop,2)} | {round(sub_sample_prop*100,2)}%, sous réserve de confirmation de la représentativité de l'échantillon à travers une analyse multidimensionnelle.")
         else:
            st.write(f"L'extrapolation des résultats fournis par cet échantillon n'est pas possible.")
  
     else:
         st.header('Conclusion générale')
-        st.write(f"L'extrapolation des résultats fournis par cet échantillon sur la population totale devrait être faite en se référant à la moyenne de l'échantillon {mean_sample}, sous réserve de confirmation de la représentativité de l'échantillon à travers une analyse multidimensionnelle.")
+        st.write(f"L'extrapolation des résultats fournis par cet échantillon sur la population totale devrait être faite en se référant à la moyenne de l'échantillon {round(mean_sample,2)} | {round(mean_sample*100,2)}% , sous réserve de confirmation de la représentativité de l'échantillon à travers une analyse multidimensionnelle.")
         
 
