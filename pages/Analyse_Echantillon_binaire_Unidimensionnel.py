@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
 import os
+from io import BytesIO
 #################################
 # Obtenir le répertoire du script actuel
 current_directory = os.path.dirname(__file__)
@@ -18,46 +19,70 @@ st.set_page_config(
     page_icon=favicon_path,  
 )
 
-###################################################""
-expected_mean=0.1
+###################################################"Global variable"
+data=None
+population_expected_mean=None
 mean_sample=None
+alpha=None
 sample_size=None
-def validate_data_quality():
-    global data,mean_sample,sample_size 
-    if data.shape[0]==1: 
+#population_size=None
+check=None
+estimated_sample_size=None
+Taille_minimale=None
+Taille_maximale=None
+#############################################""
+def validate_data():
+    global data,mean_sample,sample_size,estimated_sample_size,Taille_minimale,Taille_maximale
+
+    if data.shape[0]==2: 
         data = data.T
     else:
         pass
-    ## Estimation de la taille d'échantillon optimale dans le cas idéal où 50% des observations sont 0 et 50% sont 1
-    global expected_mean
-    estimated_sample_size=int((1.96**2)*float(expected_mean)*(1-float(expected_mean))/(0.05**2))
-    st.warning(f"La taille d'echantillon significative : {estimated_sample_size}")
-
-    #if data.shape[0]<estimated_sample_size:
-        #st.error(f"Le nombre d'observations doit être supérieur à la taille significative : {estimated_sample_size} pour garantir la significativité de l'analyse en vertu du théorème central limite.")
-        #st.stop()
-    if data.shape[1] != 1:
-        st.error("Le nombre de variables (colonnes) est supérieur à 1. Cette analyse est unidimensionnelle. Veuillez utiliser un jeu de données contenant une seule variable numérique continue!")
+    
+    if data.shape[1] != 2:
+        st.error("Le nombre de variables (colonnes) doit être égal à 2 : la première colonne pour la variable identifiant les observations ou les dossiers, et la deuxième colonne pour la variable binaire qui sera étudiée dans notre test.\nCette analyse est unidimensionnelle.")
         st.stop()
     elif data.isnull().sum().sum()>0:
-        st.error("Il y'a des valeurs manquantes à remplir ou à supprimer, Veuillez vérifier vos données!")
-        st.stop()
+        data.dropna(inplace=True)
+        st.warning("Les valeurs manquantes ont été détectées et les lignes concernées ont été supprimées.")
     else:
         pass
+    
     # Vérifier si la variable est binaire ou pas
-    unique_values = data.iloc[:,0].unique()
+    unique_values = data.iloc[:,1].unique()
     if len(unique_values) == 2:
         pass
     else:
         st.error("La variable n'est pas binaire. Veuillez vérifier vos données!")
         st.stop()
-    # Check if the unique values are 0 and 1
+    # Check if the unique values are 0 and 1 and handle case of categorical values (False/True; Anomaly/Not Anomaly)
+    HandleBinaryCategVariable()
     sample_size=data.shape[0]
-    check=HandleBinaryCategVariable(data)
-    if check==1:
-        mean_sample = data.mean()[0]
+    try:
+        mean_sample = data['Transformed_Binary'].mean()
+    except Exception:
+        mean_sample = data.iloc[:,1].mean()
+        # if sample_size>=population_size:
+        #     st.error("La taille de l'échantillon est supérieure ou égale à la taille de la population. C'est illogique !\nVeuillez vérifier la taille de l'échantillon ou le nombre d'observations de la population que vous avez entré.")
+        #     st.stop()
+        # else:
+    # Estimation de la taille d'échantillon significative pour faire le test z et garder la meme marge d'erreur alpha
+    z_score = stats.norm.ppf(1 - alpha / 2)
+    estimated_sample_size=int((z_score**2)*float(population_expected_mean)*(1-float(population_expected_mean))/(alpha**2))
+    cond1=int(sample_size*population_expected_mean)>=5
+    cond2=int(sample_size*(1-population_expected_mean))>=5
+    estimated_sample_size=max(estimated_sample_size,30)
+    Taille_minimale=estimated_sample_size-int((alpha/2)*estimated_sample_size)
+    Taille_maximale=estimated_sample_size+int((alpha/2)*estimated_sample_size)
+    if sample_size>=Taille_minimale and sample_size<=Taille_maximale and cond1 and cond2:
+        st.warning(f"✅La taille d'échantillon {sample_size} est supérieur ou égale à {Taille_minimale} et inférieur ou égale à {Taille_maximale}. Donc notre échantillon a une taille significative pour avoir des résultats fiable du z-test.")
+        # Faire le test z
+        return 'ztest'
     else:
-        st.stop()
+        # Faire le test Binomiale
+        st.warning(f"❌La taille d'échantillon {sample_size} n'est pas significative pour avoir une conclusion fiable pour le z-test . Donc on va baser sur les resultats de test binomial qui sera trés robuste et fiable dans ce cas.\n La taille significative doit varier entre {Taille_minimale} et {Taille_maximale} ")
+        return 'test binomial'
+
 ###################################"####################################"
 def generate_binary_dataframe(size):
     """
@@ -71,50 +96,49 @@ def generate_binary_dataframe(size):
     """
     return pd.DataFrame(np.random.randint(0, 2, size=size), columns=['binary_column'])
 ########################################################################
-def HandleBinaryCategVariable(data):
+def HandleBinaryCategVariable():
     """
     Gérer le cas d'une variable catégorielle avec deux modalités (binaire), dans un jeu de données unidimensionnel.
-    Paramètres :
-    data : DataFrame unidimensionnel de pandas.
-    Retourne :
-    checker(int) : 1: la variable est numérique binaire (0,1) / 0: la variable est catégorielle avec deux modalités
+    
     """
-    checker=1
-    unique_values = set(data.iloc[:,0].unique())
+    global data,unique_values
+    unique_values = set(data.iloc[:, 1].unique())
+    
     # Check if the unique values are 0 and 1
     if unique_values == {0, 1}:
         pass
     else:
-        values =list(unique_values)
-        st.warning(f"Les données ne semblent pas être directement binaires (0 et 1), mais plutôt modalités {values}. veuillez les changer par 0 et 1")
-        checker=0
-   
-    return checker
+        values = list(unique_values)
+        st.warning(f"Les données ne semblent pas être directement binaires (0 et 1), mais plutôt modalités {values}. Veuillez les changer par 0 et 1.")
+        # Demander à l'utilisateur de choisir quelle catégorie représente la valeur vraie (1)
+        selected_true_value = st.selectbox(
+            "Choisissez la catégorie qui doit être considérée comme 'Vrai' (1):",
+            options=values
+        )
+        
+        # Modifier la colonne binaire basée sur la sélection de l'utilisateur
+        data['Transformed_Binary'] = np.where(data.iloc[:, 1] == selected_true_value, 1, 0)
+            
 ############################################################################
-def z_test(sample_prop, population_prop, sample_size, alpha=0.05):
+def z_test(population_prop,sample_prop=mean_sample,sample_size=sample_size,alpha=0.05):
     """
     Effectue un test z bilatéral pour comparer la proportion de l'échantillon à la proportion de la population.
 
     Paramètres :
-
-    sample_prop : Proportion de l'échantillon (la fréquence des valeurs 1)
+    
     population_prop : Proportion de la population (la fréquence des valeurs 1 estimée ou réelle)
-    sample_size : Taille de l'échantillon
     alpha : Niveau de significativité (par défaut, 0,05 pour un intervalle de confiance de 95 %)
 
     Retourne :
-
-    z_statistic : La statistique de test z
-    p_value : La valeur p associée à la statistique de test z
-    ci_lower : Limite inférieure de l'intervalle de confiance
-    ci_upper : Limite supérieure de l'intervalle de confiance
+    - result1 : DataFrame contenant les statistiques descriptives de l'échantillon
+    - result2 : DataFrame contenant les résultats du test binomial
     """
     st.divider()
     st.header("Résultats d'Analyse")
+    
     # Calculate standard error
     standard_error = (population_prop * (1 - population_prop) / sample_size) ** 0.5
-    standard_sample= (sample_prop * (1 - sample_prop) / sample_size) ** 0.5
-    mean_sample=sample_prop 
+    standard_sample= (sample_prop * (1 - sample_prop)) ** 0.5
     # Calculate z-test statistic
     z_statistic = (sample_prop - population_prop) / standard_error
 
@@ -127,21 +151,24 @@ def z_test(sample_prop, population_prop, sample_size, alpha=0.05):
     # Calculate confidence interval
     ci_lower = sample_prop - z_critical * standard_error
     ci_upper = sample_prop + z_critical * standard_error
-    test_result = (
+    print('*****************',sample_prop)
+    test_result=(
     f"❌ L'hypothèse nulle est rejetée, ce qui démontre de manière significative une différence "
-    f"entre la proportion de l'échantillon et celle de la population. Ainsi, il est évident que "
+    f"entre la moyenne (la proportion) de l'échantillon et celle de la population. Ainsi, il est évident que "
     f"l'échantillon n'est pas représentatif, avec une confiance de {100-round(p_value*100,2)}%"
     ) if p_value <= alpha else (
-    f"✅ On ne peut pas rejeter l'hypothèse nulle H0, qui suggère que notre échantillon ne diffère "
-    f"pas de manière significative de la population étudiée. Ainsi, nous ne pouvons pas conclure que "
-    f"la proportion de l'échantillon est significativement différente de la proportion de la population. "
-    f"En d'autres termes, l'échantillon est représentatif!!!"
+    f"✅ On ne peut pas rejeter l'hypothèse nulle H0, qui suggère que la proportion de l'échantillon ne diffère "
+    f"pas de manière significative de celle de la population étudiée. Ainsi, nous ne pouvons pas conclure que "
+    f"la moyenne (la proportion) de l'échantillon est significativement différente de la moyenne de la population. "
+    f"Car le risque d'erreur de rejeter à tort l'hypothèse nulle (H0) est inacceptable. Le risque est de {round(p_value * 100, 2)}%.\n"        
+    f"En d'autres termes, l'échantillon reflète les principales caractéristiques dans la population, notamment la moyenne."
+    f" Il est nécessaire de le confirmer à l'aide de l'analyse multidimensionnelle si possible."
     )
 
     # Construct result dictionary
     result1 = {
         "Nbr de l'obseravtions dans l'échantillon":[sample_size],
-        "moyenne de l'échantillon": ["{:.2f}".format(mean_sample)],
+        "moyenne de l'échantillon": ["{:.2f}".format(sample_prop)],
         "Ecart-Type de l'échantillon": ["{:.2f}".format(standard_sample)]
     }
     result2={
@@ -156,6 +183,153 @@ def z_test(sample_prop, population_prop, sample_size, alpha=0.05):
     result1=pd.DataFrame(result1)
     result2=pd.DataFrame(result2)
     return result1,result2
+#####################################################################################
+def binomial_test_result(population_prop,sample_prop=mean_sample,sample_size=sample_size,data=data,alpha=0.05):
+    """
+    Effectue un test binomial pour comparer la proportion de l'échantillon à la proportion de la population.
+
+    Paramètres :
+
+    - population_prop : Proportion de la population (la fréquence des valeurs 1 estimée ou réelle)
+    - alpha : Niveau de significativité (par défaut, 0,05 pour un intervalle de confiance de 95 %)
+
+    Retourne :
+    - result1 : DataFrame contenant les statistiques descriptives de l'échantillon
+    - result2 : DataFrame contenant les résultats du test binomial
+    """
+    
+    # Calculer l'ecart type
+    standard_sample= (sample_prop * (1 - sample_prop)) ** 0.5
+    # Calculer le nombre de succès observés
+    try: 
+       nombre_de_succes = data[data['Transformed_Binary']==1].shape[0]
+    except Exception:
+        nombre_de_succes = data[data.iloc[:,1]==1].shape[0]
+
+    # Effectuer le test binomial
+    results = stats.binomtest(nombre_de_succes, sample_size, population_prop, alternative='two-sided')
+    ci_lower=results.proportion_ci(confidence_level=1-alpha)[0]
+    ci_upper=results.proportion_ci(confidence_level=1-alpha)[1]
+    # Déterminer la significativité du résultat
+    test_result = (
+    f"❌ L'hypothèse nulle est rejetée, ce qui démontre de manière significative une différence "
+    f"entre la moyenne (la proportion) de l'échantillon et celle de la population. Ainsi, il est évident que "
+    f"l'échantillon n'est pas représentatif, avec une confiance de {100-round(results.pvalue*100,2)}%"
+    ) if results.pvalue <= alpha else (
+    f"✅ On ne peut pas rejeter l'hypothèse nulle H0, qui suggère que la proportion de l'échantillon ne diffère "
+    f"pas de manière significative de celle de la population étudiée. Ainsi, nous ne pouvons pas conclure que "
+    f"la moyenne (la proportion) de l'échantillon est significativement différente de la moyenne de la population. "
+    f"Car le risque d'erreur de rejeter à tort l'hypothèse nulle (H0) est inacceptable. Le risque est de {round(results.pvalue * 100, 2)}%.\n"        
+    f"En d'autres termes, l'échantillon reflète les principales caractéristiques dans la population, notamment la moyenne."
+    f" Il est nécessaire de le confirmer à l'aide de l'analyse multidimensionnelle si possible."
+    )
+
+    # Construct result dictionaries
+    result1 = {
+        "Nbr de l'obseravtions dans l'échantillon":[sample_size],
+        "moyenne de l'échantillon": ["{:.2f}".format(sample_prop)],
+        "Ecart-Type de l'échantillon": ["{:.2f}".format(standard_sample)]
+    }
+    
+    result2 = {
+        "p_value": [f'{round(results.pvalue * 100, 2)}%'],
+        "alpha": [f'{int(alpha * 100)}%'],
+        "critical_value": ["{:.2f}".format(results.statistic)],
+        "interval de confiance":[f"[{round(ci_lower,2)},{round(ci_upper,2)}]"],
+        "test_result": [f"{test_result}"]
+    }
+
+    result1 = pd.DataFrame(result1)
+    result2 = pd.DataFrame(result2)
+    
+    return result1, result2
+########################################################################
+def testSubSample(testtype, sub_sample_prop, population_prop, subsample_size,data=None,alpha=0.05):
+    """
+    Effectue un test statistique sur un sous-échantillon pour évaluer la représentativité en fonction du type de test spécifié.
+    
+    Paramètres :
+    - testtype (str) : Type de test à effectuer, soit 'z_test' ou 'binomial_test'.
+    - sample_prop (float) : Proportion observée dans l'échantillon (la fréquence des valeurs 1).
+    - population_prop (float) : Proportion de la population (la fréquence des valeurs 1 estimée ou réelle).
+    - subsample_size (int) : Taille du sous-échantillon.
+    - alpha (float) : Niveau de signification pour les tests (par défaut, 0.05 pour un intervalle de confiance de 95 %).
+
+    Retourne :
+    - bool : True si le sous-échantillon est représentatif, Faux sinon.
+    """
+
+    if testtype == 'z_test':
+        # Calculer l'écart-type pour le test Z
+        df1,df2=z_test(population_prop,sub_sample_prop,subsample_size, alpha)
+
+        # Évaluer la représentativité du sous-échantillon
+        if '✅' in df2['test_result'][0]:
+            return True
+        else:
+            return False
+
+    elif testtype == 'binomial_test':
+        df1,df2=binomial_test_result(population_prop,sub_sample_prop,subsample_size,data,alpha)
+        # Évaluer la représentativité du sous-échantillon
+        if '✅' in df2['test_result'][0]:
+            return True
+        else:
+            return False
+#########################################################################################""
+def findRepresentativeSubSample(data,population_prop, alpha=0.05, max_iterations=100):
+    """
+    Cherche un sous-échantillon représentatif en effectuant des tests statistiques sur plusieurs sous-échantillons.
+    
+    Paramètres :
+    - data (DataFrame) : Le DataFrame Echantillon contenant les données binaires.
+    - population_prop (float) : Proportion de la population (la fréquence des valeurs 1 estimée ou réelle).
+    - alpha (float) : Niveau de signification pour les tests (par défaut, 0.05 pour un intervalle de confiance de 95 %).
+    - max_iterations (int) : Nombre maximum d'itérations (par défaut, 100).
+    """
+    sample_size = data.shape[0]
+    is_representative=None
+    # Vérifier la taille de l'échantillon pour le test Z
+    if sample_size >= 500:
+        for i in range(max_iterations):
+            subsample = data.sample(frac=0.20, random_state=i)
+            try: 
+                sub_sample_prop = subsample['Transformed_Binary'].mean()
+            except Exception:
+                sub_sample_prop = subsample.iloc[:,1].mean()
+            
+            subsample_size = subsample.shape[0]
+            # Vérifier la taille de l'échantillon pour le test Z
+            if subsample_size >= Taille_minimale and subsample_size<=Taille_maximale:
+               z_test_available = True
+            else:
+               z_test_available = False
+            
+            # Utiliser le test z si la taille du sous-échantillon est suffisante, sinon on utilise le test binomial 
+            if z_test_available:
+                is_representative = testSubSample('z_test', sub_sample_prop, population_prop, subsample_size, alpha)
+            else:
+                is_representative = testSubSample('binomial_test', sub_sample_prop, population_prop, subsample_size,subsample, alpha)
+                
+            if is_representative:
+                st.success("Un sous-échantillon, probablement représentatif de la population, a été sélectionné !\nVeuillez le télécharger et le tester dans les mêmes conditions que celles du test précédent qui a étudié l'échantillon parent.")
+                # Souvgarder les données en mémoire
+                output = BytesIO()
+                subsample.to_excel(output, index=False, sheet_name='Sous_Echantillon_representatif')
+                content=output.getvalue()
+                # bouton de téléchargement
+                st.download_button(
+                    label="Télécharger le fichier Excel",
+                    data=content,
+                    file_name="SousEchantillonRepresentatif.xlsx",
+                    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                    key='DownloadButton'
+                    )
+                break
+                
+    else:
+        pass
+                
 #############################################################################
 def plot_binary_distribution_pie(data):
     """
@@ -170,11 +344,10 @@ def plot_binary_distribution_pie(data):
     st.divider()
     st.header("Visualisation")
     # Calculer les comptages des catégories dans les données
-    counts = data.value_counts()
+    counts = data.iloc[:,1].value_counts()
 
     # Tracer le graphique circulaire
     fig, ax = plt.subplots(figsize=(6, 6))
-    #plt.figure(figsize=(6, 6))
     sns.set_style("whitegrid")
     plt.pie(counts, labels=counts.index, autopct='%1.1f%%', startangle=90)
     plt.title("Répartition des données binaires")
@@ -184,7 +357,6 @@ def plot_binary_distribution_pie(data):
 # Le titre de la page et la description
 st.title("Analyse de l'Echantillon Binaire")
 
-data=None
 st.sidebar.header("Paramètres")
 data_choice = st.sidebar.selectbox("Source des données", ("Uploader un fichier", "Générer des données aléatoires"))
 if data_choice == "Uploader un fichier":
@@ -192,29 +364,37 @@ if data_choice == "Uploader un fichier":
     if uploaded_file is not None:
         if uploaded_file.name.endswith('.csv'):
             data = pd.read_csv(uploaded_file,header=None)
-            validate_data_quality()
             
         elif uploaded_file.name.endswith('.xlsx'):
             data = pd.read_excel(uploaded_file, engine='openpyxl')
-            #validate_data_quality()
         else:
             st.error("Le format de fichier n'est pas pris en charge.")
             st.stop()
+        #population_size=st.sidebar.number_input("La Taille de la population (requis)", min_value=1, value=None)
 
 elif data_choice == "Générer des données aléatoires":
-    data_size = st.sidebar.number_input("Taille de l'échantillon", min_value=30, max_value=50000, value=100)
+    data_size = st.sidebar.number_input("Taille de l'échantillon", min_value=2000, max_value=50000, value=2000)
     data=generate_binary_dataframe((data_size,1))
-    #validate_data_quality()
 
-expected_mean = st.sidebar.number_input("Moyenne (proportion) attendue de la population", min_value=0.01, max_value=1.0, value=None)
+population_expected_mean = st.sidebar.number_input("Moyenne (proportion) attendue de la population (requis)", min_value=0.01, max_value=1.0, value=None)
 alpha = st.sidebar.slider("Niveau de signification (alpha)", min_value=0.01, max_value=0.10, value=0.05, step=0.01)
-if expected_mean and alpha:
-    validate_data_quality()
-button=st.sidebar.button('Analyser')
+
+if population_expected_mean and alpha: #and population_size :
+    check=validate_data()
+button=st.sidebar.button('Analyser',key='AnalyserButton')
 if button:
-    df1,df2=z_test(mean_sample,expected_mean,sample_size,alpha)
+    if check=='z_test':
+        df1,df2=z_test(population_expected_mean,alpha)
+    else:
+        df1,df2=binomial_test_result(population_expected_mean,sample_prop=mean_sample,sample_size=sample_size,data=data,alpha=alpha)
     st.write("Statistiques descriptives :")
     st.table(df1)
     st.write("Résultats du test d'hypothèse :")
     st.table(df2)
     plot_binary_distribution_pie(data)
+
+    if "❌" in df2['test_result'][0]:
+        findRepresentativeSubSample(data,population_expected_mean, alpha)
+    else:
+        pass
+

@@ -22,9 +22,6 @@ st.set_page_config(
 ###################################
 numeric_columnsList=[]
 Categorical_variables=[]
-p=0.5
-## Estimation de la taille d'échantillon optimale dans le cas idéal où 50% des observations sont 0 et 50% sont 1
-estimated_sample_size=int((1.96**2)*p*(1-p)/(0.05**2))
 ################################
 def generate_multidimensional_data(size, nbrQvar, nbrCvar):
     """
@@ -69,27 +66,22 @@ def validateData():
     """
     Valide les données en vérifiant plusieurs critères pour garantir leur adéquation à l'analyse statistique.
 
-    Raises:
-    
-        RuntimeError: Si l'une des conditions de validation n'est pas satisfaite, une erreur est affichée et l'exécution est arrêtée.
-
     """
-    # Vérifier si le nombre d'observations est suffisant
-    if data.shape[0] < estimated_sample_size:
-        st.error(f"Le nombre d'observations doit être au moins égal à la taille d'échantillon estimée : {estimated_sample_size}, pour garantir la significativité de l'analyse.")
-        st.stop()
-
+    global data
     # Vérifier si le jeu de données est multidimensionnel (plus d'une variable)
     if data.shape[1] == 1:
-        st.error("Le nombre de variables (colonnes) est égal à 1. Cette analyse nécessite plusieurs variables. Veuillez utiliser un jeu de données avec plusieurs variables!")
+        st.error("Le nombre de variables (colonnes) est égal à 1. Cette analyse nécessite plusieurs variables (au moins 2 variables). Veuillez utiliser un jeu de données avec plusieurs variables!")
         st.stop()
-
     # Vérifier s'il y a des valeurs manquantes
     if data.isnull().sum().sum():
-        st.error("Il y a des valeurs manquantes à remplir ou à supprimer. Veuillez vérifier vos données!")
+        data.dropna(inplace=True)
+        st.warning("Les valeurs manquantes ont été détectées et les lignes concernées ont été supprimées.")
+    # Vérifier si le nombre d'observations est suffisant
+    if data.shape[0] < 100:
+        st.warning("Le nombre d'observations doit être d'au moins 100 pour garantir une puissance statistique adéquate.\nCela permet également d'obtenir des résultats d'analyse plus robustes et significatifs.")
+    if data.shape[0]< 30:
+        st.error("Le nombre d'observations doit être d'au moins 30 pour garantir la validité de l'analyse selon le théorème central limite, et pour compléter correctement l'analyse.")
         st.stop()
-
-    
 ############################################""
 def Handle_groupingSampleBoxMTest(X):
     """
@@ -180,12 +172,14 @@ def tttestmultivariate(X, null_hypothesis_means,alpha):
     interpretation=(
         f"❌ L'hypothèse nulle est rejetée, ce qui démontre de manière significative une différence "
         f"entre la moyenne de l'échantillon et celle de la population. Ainsi, il est évident que "
-        f"l'échantillon n'est pas représentatif, avec une confiance de {100-p_value*100}%"
+        f"l'échantillon n'est pas représentatif des principales caractéristiques (notamment la moyenne) des variables quantitatives dans la population, avec une confiance de {100 - p_value * 100:.2f}%."
         ) if p_value <= alpha else (
-        f"✅ On ne peut pas rejeter l'hypothèse nulle H0, qui suggère que notre échantillon ne diffère "
-        f" pas de manière significative de la population étudiée. Ainsi, nous ne pouvons pas conclure que "
-        f" la moyenne de l'échantillon est significativement différente de la moyenne de la population. "
-        f" En d'autres termes, l'échantillon est représentatif en termes de caractéristiques quantitatives!!!"
+        f"✅ On ne peut pas rejeter l'hypothèse nulle H0, qui suggère que la moyenne de l'échantillon ne diffère "
+        f" pas de manière significative de celle de la population étudiée. Ainsi, nous ne pouvons pas conclure que "
+        f" la moyenne de l'échantillon est significativement différente de celle de la population."
+        f" Car le risque d'erreur de rejeter à tort l'hypothèse nulle (H0) est inacceptable. Le risque est de {round(p_value * 100, 2)}%.\n"        
+        f"En d'autres termes, l'échantillon reflète les principales caractéristiques des variables quantitatives dans la population, notamment leurs moyennes."
+        f" Il est nécessaire de le confirmer à l'aide de résultats supplémentaires provenant d'autres tests comparant différentes caractéristiques, tels que ceux qui suivent."
         )
     results=pd.DataFrame({'T2':[f'{round(T2,2)}'],'F':[f'{round(F,2)}'],'p_value':[f'{round(p_value*100,2)}%'],'alpha':[f'{alpha*100}%'],'Interprétation':[interpretation]})
     return results
@@ -238,11 +232,15 @@ def SimpleRepresentativenessBy_T_test(X, expected_mean, alpha):
         # Interpréter le résultat du test en fonction du p-value et du niveau de signification alpha
         test_result = (
             f"❌ L'hypothèse nulle est rejetée pour la variable {var_name}. Il existe une différence significative entre la moyenne de la variable dans l'échantillon "
-            f"et celle de la population avec une confiance de {100-round(p_value*100, 2)}%. Par conséquent, la variable dans "
-            f"l'échantillon n'est pas représentative de la même variable dans la population."
+            f"et celle de la population avec une confiance de {100-round(p_value*100, 2)}%. Par conséquent, "
+            f"la variable {var_name} n'est pas représentative de celle de la population."
         ) if p_value <= alpha_corrected else (
-            f"✅ L'hypothèse nulle H0 acceptée pour la variable {var_name}. Cela suggère que la variable dans l'échantillon ne diffère pas de manière "
-            f"significative de la même variable dans la population étudiée. Ainsi, nous pouvons conclure que la variable dans l'échantillon est représentative de celle dans la population."
+           f"✅ On ne peut pas rejeter l'hypothèse nulle H0, qui suggère que la moyenne de la variable dans l'échantillon ne diffère "
+        f" pas de manière significative de celle de la population étudiée. Ainsi, nous ne pouvons pas conclure que "
+        f" la moyenne de la variable {var_name} est significativement différente de celle de la population."
+        f" Car le risque d'erreur de rejeter à tort l'hypothèse nulle (H0) est inacceptable. Le risque est de {round(p_value * 100, 2)}%.\n"        
+        f"En d'autres termes, la variable {var_name} est représentative de celle de la population en termes de caractéristiques principales, notamment la moyenne."
+        f" Il est nécessaire de le confirmer à l'aide de résultats d'autres tests comparant différentes caractéristiques, tels que ceux qui suivent."
         )
 
         interpretations.append(test_result)

@@ -26,14 +26,14 @@ def validateDataQuality():
     else:
         pass
     if data.shape[0]<30:
-        st.error("Le nombre d'observations doit être supérieur à 30 pour garantir la significativité de l'analyse en vertu du théorème central limite.")
+        st.error("Le nombre d'observations doit être d'au moins 30 pour garantir la validité de l'analyse selon le théorème central limite, et pour compléter correctement l'analyse.\nPour obtenir des résultats plus robustes et significatifs, une taille d'échantillon de 100 ou plus est préférable.")
         st.stop()
     elif data.shape[1] != 1:
         st.error("Le nombre de variables (colonnes) est supérieur à 1. Cette analyse est unidimensionnelle. Veuillez utiliser un jeu de données contenant une seule variable numérique continue!")
         st.stop()
     elif data.isnull().sum().sum()>0:
-        st.error("Il y'a des valeurs manquantes à remplir ou à supprimer, Veuillez vérifier vos données!")
-        st.stop()
+        data.dropna(inplace=True)
+        st.warning("Les valeurs manquantes ont été détectées et les lignes concernées ont été supprimées.")
     else:
         pass
     # Vérifier si les valeurs ne sont pas numériques
@@ -121,7 +121,9 @@ def analyze_sample(data, expected_mean, alpha, population_std=None):
         f"✅ On ne peut pas rejeter l'hypothèse nulle H0, qui suggère que notre échantillon ne diffère "
         f"pas de manière significative de la population étudiée. Ainsi, nous ne pouvons pas conclure que "
         f"la moyenne de l'échantillon est significativement différente de la moyenne de la population. "
-        f"En d'autres termes, l'échantillon est représentatif!!!"
+        f"Car le risque d'erreur de rejeter à tort l'hypothèse nulle (H0) est inacceptable. Le risque est de {round(p_value * 100, 2)}%.\n"        
+        f"En d'autres termes, l'échantillon reflète les principales caractéristiques dans la population, notamment la moyenne."
+        f" Il est nécessaire de le confirmer à l'aide de l'analyse multidimensionnelle si possible."
         )
     else:
         # Z-test
@@ -131,10 +133,12 @@ def analyze_sample(data, expected_mean, alpha, population_std=None):
         f"entre la moyenne de l'échantillon et celle de la population. Ainsi, il est évident que "
         f"l'échantillon n'est pas représentatif, avec une confiance de {100-round(p_value*100,2)}%"
         ) if p_value <= alpha else (
-        f"✅ On ne peut pas rejeter l'hypothèse nulle H0, qui suggère que notre échantillon ne diffère "
-        f"pas de manière significative de la population étudiée. Ainsi, nous ne pouvons pas conclure que "
+        f"✅ On ne peut pas rejeter l'hypothèse nulle H0, qui suggère que la moyenne de l'échantillon ne diffère "
+        f"pas de manière significative de celle de la population étudiée. Ainsi, nous ne pouvons pas conclure que "
         f"la moyenne de l'échantillon est significativement différente de la moyenne de la population. "
-        f"En d'autres termes, l'échantillon est représentatif!!!"
+        f"Car le risque d'erreur de rejeter à tort l'hypothèse nulle (H0) est inacceptable. Le risque est de {round(p_value * 100, 2)}%.\n"        
+        f"En d'autres termes, l'échantillon reflète les principales caractéristiques dans la population, notamment la moyenne."
+        f" Il est nécessaire de le confirmer à l'aide de l'analyse multidimensionnelle si possible."
         )
         critical_value = stats.norm.ppf(1 - alpha / 2)
     # Construct result dictionary
@@ -214,7 +218,7 @@ elif data_choice == "Générer des données aléatoires":
     data_std = st.sidebar.number_input("Écart type des données aléatoires", value=10.0)
     data = np.random.normal(loc=data_mean, scale=data_std, size=data_size)
 
-expected_mean = st.sidebar.number_input("Moyenne attendue de la population", value=None)
+expected_mean = st.sidebar.number_input("Moyenne attendue de la population (requis)", value=None)
 alpha = st.sidebar.slider("Niveau de signification (alpha)", min_value=0.01, max_value=0.10, value=0.05, step=0.01)
 population_std = st.sidebar.number_input("Écart type de la population (facultatif)", value=None)
 
