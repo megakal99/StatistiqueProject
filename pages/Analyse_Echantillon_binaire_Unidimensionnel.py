@@ -80,7 +80,7 @@ def validate_data():
         return 'ztest'
     else:
         # Faire le test Binomiale
-        st.warning(f"❌La taille d'échantillon {sample_size} n'est pas significative pour avoir une conclusion fiable pour le z-test . Donc on va baser sur les resultats de test binomial qui sera trés robuste et fiable dans ce cas.\n La taille significative doit varier entre {Taille_minimale} et {Taille_maximale} ")
+        st.warning(f"❌La taille d'échantillon {sample_size} n'est pas significative pour avoir une conclusion fiable pour le z-test. Donc on va baser sur les resultats de test binomial qui sera trés robuste et fiable dans ce cas.\n La taille significative pour réussir ou valider le z-test doit varier entre {Taille_minimale} et {Taille_maximale}")
         return 'test binomial'
 
 ###################################"####################################"
