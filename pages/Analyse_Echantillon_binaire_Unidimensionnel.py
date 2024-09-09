@@ -337,6 +337,7 @@ def findRepresentativeSubSample(data,population_prop, alpha=0.05, max_iterations
                    pass
                 
     else:
+        sub_sample_prop=None
         return 0,sub_sample_prop
                 
 #############################################################################
