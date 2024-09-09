@@ -161,8 +161,8 @@ def z_test(population_prop,sample_prop=mean_sample,sample_size=sample_size,alpha
     f"pas de manière significative de celle de la population étudiée. Ainsi, nous ne pouvons pas conclure que "
     f"la moyenne (la proportion) de l'échantillon est significativement différente de la moyenne de la population, "
     f"le risque d'erreur de rejeter à tort l'hypothèse nulle (H0) étant supérieur au seuil du risque acceptable alpha ({round(p_value * 100, 2)}% > {round(alpha*100,2)}%).\n"        
-    f"En d'autres termes, l'échantillon reflète les principales caractéristiques dans la population, notamment la moyenne."
-    f" Il est toutefois nécessaire de le confirmer à l'aide de l'analyse multidimensionnelle si possible."
+    f"En d'autres termes, l'échantillon reflète les principales caractéristiques dans la population, notamment la moyenne.\n"
+    f"Il est toutefois nécessaire de le confirmer à l'aide de l'analyse multidimensionnelle si possible."
     )
 
     # Construct result dictionary
@@ -220,7 +220,7 @@ def binomial_test_result(population_prop,sample_prop=mean_sample,sample_size=sam
     f"pas de manière significative de celle de la population étudiée. Ainsi, nous ne pouvons pas conclure que "
     f"la moyenne (la proportion) de l'échantillon est significativement différente de la moyenne de la population, "
     f"le risque d'erreur de rejeter à tort l'hypothèse nulle (H0) étant supérieur au seuil du risque acceptable alpha ({round(results.pvalue * 100, 2)}% > {round(alpha*100,2)}%).\n"        
-    f"En d'autres termes, l'échantillon reflète les principales caractéristiques dans la population, notamment la moyenne."
+    f"En d'autres termes, l'échantillon reflète les principales caractéristiques dans la population, notamment la moyenne.\n"
     f" Il est toutefois nécessaire de le confirmer à l'aide de l'analyse multidimensionnelle si possible."
     )
 
@@ -406,12 +406,12 @@ if button:
         verf,sub_sample_prop=findRepresentativeSubSample(data,population_expected_mean, alpha)
         st.header('Conclusion générale')
         if verf:
-           st.write(f"L'extrapolation des résultats fournis par cet échantillon sur la population totale devrait être faite en se référant à la moyenne ou la proportion de sous-échantillon {round(sub_sample_prop,2)} | {round(sub_sample_prop*100,2)}%, sous réserve de confirmation de la représentativité de l'échantillon à travers une analyse multidimensionnelle.")
+           st.write(f"L'extrapolation des résultats fournis par cet échantillon sur la population totale devrait être faite en se référant à la moyenne ou la proportion de sous-échantillon {round(sub_sample_prop,2)}, sous réserve de confirmation de la représentativité de l'échantillon à travers une analyse multidimensionnelle.")
         else:
            st.write(f"L'extrapolation des résultats fournis par cet échantillon n'est pas possible.")
  
     else:
         st.header('Conclusion générale')
-        st.write(f"L'extrapolation des résultats fournis par cet échantillon sur la population totale devrait être faite en se référant à la moyenne de l'échantillon {round(mean_sample,2)} | {round(mean_sample*100,2)}% , sous réserve de confirmation de la représentativité de l'échantillon à travers une analyse multidimensionnelle.")
+        st.write(f"L'extrapolation des résultats fournis par cet échantillon sur la population totale devrait être faite en se référant à la moyenne de l'échantillon {round(mean_sample,2)}, sous réserve de confirmation de la représentativité de l'échantillon à travers une analyse multidimensionnelle.")
         
 
