@@ -103,7 +103,8 @@ def analyze_sample(data, expected_mean, alpha, population_std=None):
     population_std (type-float, facultatif): Écart type de la population. Si None, le test T sera utilisé.
 
    Retourne:
-    dict: Dictionnaire contenant diverses statistiques et le résultat du test d'hypothèse.
+    result1: Pandas DataFrame contenant diverses statistiques descriptives 
+    result2: Pandas DataFrame contenant diverses valeurs du test d'hypothèse avec une conclusion.
 
     """
     st.divider()
