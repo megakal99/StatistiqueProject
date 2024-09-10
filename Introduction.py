@@ -47,7 +47,7 @@ st.markdown("""
     
     ➤ Moyenne (ou Proportion) Attendue :
         
-        ● Pour l'échantillon binaire, il s'agit simplement de la proportion attendue ou hypothétique d'une catégorie spécifique dans la population. Par exemple, si vous estimez que 2% des dossiers dans la population sont des anomalies, et si vous ciblez cette catégorie dans votre échantillon, vous devez entrer cette proportion (2%) dans l'application pour la comparer à ce que vous observez dans votre échantillon.
+        ● Pour l'échantillon binaire, il s'agit simplement de la proportion attendue ou hypothétique d'une catégorie spécifique dans la population. Par exemple, si vous estimez que 2% des dossiers dans la population sont des anomalies, vous devez saisir cette proportion (2%) dans l'application afin de la comparer à ce que vous observez dans votre échantillon.
       
         ● Pour les échantillons quantitatifs, il s'agit de la moyenne que vous attendez de trouver dans la population.
 
