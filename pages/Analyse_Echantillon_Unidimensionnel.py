@@ -39,7 +39,7 @@ def validateDataQuality():
         data.dropna(inplace=True)
         st.warning("Les valeurs manquantes ont été détectées et les lignes concernées ont été supprimées.")
     
-    # identifier les lignes dupliquées en se basant sur toutes les colonnes (2 variables: une variable d'identification des observations et une variable binaire)
+    # identifier les lignes dupliquées en se basant sur toutes les colonnes (une seule variable quantitative continue)
     dups = data.duplicated()
     # compter le nombre de lignes dupliquées
     dup_count = dups.sum()
