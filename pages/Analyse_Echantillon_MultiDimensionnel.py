@@ -72,10 +72,22 @@ def validateData():
     if data.shape[1] == 1:
         st.error("Le nombre de variables (colonnes) est égal à 1. Cette analyse nécessite plusieurs variables (au moins 2 variables). Veuillez utiliser un jeu de données avec plusieurs variables!")
         st.stop()
+    
     # Vérifier s'il y a des valeurs manquantes
     if data.isnull().sum().sum():
         data.dropna(inplace=True)
         st.warning("Les valeurs manquantes ont été détectées et les lignes concernées ont été supprimées.")
+    
+    # identifier les lignes dupliquées en se basant sur toutes les colonnes (variables)
+    dups = data.duplicated()
+    # compter le nombre de lignes dupliquées
+    dup_count = dups.sum()
+    # Vérifier s'il y'a des duplications ou pas
+    if dup_count:
+        # Supprimer toutes les lignes dupliquées
+        data.drop_duplicates(inplace=True)
+        st.warning("Les observations (lignes) dupliquées ont été détectées et ont été supprimées.")
+    
     # Vérifier si le nombre d'observations est suffisant
     if data.shape[0] < 100:
         st.warning("Le nombre d'observations doit être d'au moins 100 pour garantir une puissance statistique adéquate.\nCela permet également d'obtenir des résultats d'analyse plus robustes et significatifs.")
