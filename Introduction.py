@@ -62,7 +62,7 @@ st.markdown("""
 
         ● Hypothèse Alternative (H₁) : La moyenne de l'échantillon est significativement différente de celle de la population.
         
-        Si la p-value est inférieure ou égale au seuil alpha (α) que vous avez choisi, cela suggère une différence significative entre la moyenne de l'échantillon et celle de la population.
+        Si la p-value est inférieure ou égale au seuil alpha (α) que vous avez choisi, cela indique une différence statistiquement significative entre la moyenne de l'échantillon et celle de la population.
 
     ➤ Écart-type ou Dispersion de la population (Facultatif) :
     
