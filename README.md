@@ -12,15 +12,11 @@ Explore the live application here: https://statistiqueproject-cfemrtqigxp5su8kb5
     * Hypothesis Testing: Use hypothesis tests to evaluate the representativeness of sample data.
     * Interactive Interface: Leverage Streamlit for interactive and user-friendly analysis and visualization.
 
-### Running Locally:
+### Exécution Locale :
 
-To set up and run this project on your local machine, follow these steps:
+Pour configurer et exécuter ce projet sur votre machine locale, suivez ces étapes :
 
-    1- Clone the Repository
-    2- Create and Activate a Virtual Environment: python -m venv venv
-    3- Install Dependencies: pip install -r requirements.txt
-
-### Run the Application:
-
-streamlit run Introduction.py
+    1- Créer et activer un environnement virtuel : python -m venv venv
+    2- Installer les dépendances : pip install -r requirements.txt
+    3- Lancer l'Application par la commande suivante : streamlit run Introduction.py
 
