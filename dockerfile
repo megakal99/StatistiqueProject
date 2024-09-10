@@ -1,20 +1,21 @@
 # Utiliser l'image officielle de Python 3.12 comme base
 FROM python:3.12-slim
 
-# DÃ©finir le rÃ©pertoire de travail dans le conteneur
+# Définir le répertoire de travail dans le conteneur
 WORKDIR /Sanalam_Stats_APP
 
-# Copier le fichier de dÃ©pendances dans le conteneur
+# Copier le fichier de dépendances dans le conteneur
 COPY requirements.txt .
 
-# Installer les dÃ©pendances
+# Installer les dépendances
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copier le reste des fichiers de l'application dans le conteneur
 COPY . .
 
-# Exposer le port que Streamlit utilise (par dÃ©faut 8501)
+# Exposer le port que Streamlit utilise (par défaut 8501)
 EXPOSE 8501
 
-# DÃ©finir la commande par dÃ©faut pour lancer Streamlit avec les paramÃ¨tres appropriÃ©s (--server.address=0.0.0.0 pour Ã©couter sur toutes les interfaces rÃ©seau. Cela permet Ã  l'application d'Ãªtre accessible depuis n'importe quelle adresse IP)
+# Définir la commande par défaut pour lancer Streamlit avec les paramètres appropriés (--server.address=0.0.0.0 pour écouter sur toutes les interfaces réseau. Cela permet à l'application d'être accessible depuis n'importe quelle adresse IP)
 CMD ["streamlit", "run", "Introduction.py", "--server.address=0.0.0.0", "--server.port=8501"]
+                                                 
