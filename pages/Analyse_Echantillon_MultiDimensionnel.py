@@ -163,14 +163,8 @@ def tttestmultivariate(X, null_hypothesis_means,alpha):
     null_hypothesis_means : liste ou tableau Moyennes nulles hypothétiques de la moyenne de la population  pour chaque variable. 
     Doit être de la même longueur que le nombre de colonnes dans 'data'.
 
-    Retourne : dict
-        Un dictionnaire contenant les résultats suivants :
-        - 'T2' : Valeur T2 (T-carré)
-        - 'F' : Valeur F
-        - 'df1' : Premier degré de liberté
-        - 'df2' : Deuxième degré de liberté
-        - 'p-val' : Valeur p du test
-        - 'interpretation' : Interprétation du résultat du test basée sur le seuil alpha.
+    Retourne : Pandas DataFrame
+        results: DataFrame combine tous les valeurs ou les statistiques de Hotelling test, avec une conclusion
     Note :
 
     La fonction utilise pingouin.multivariate_ttest pour effectuer le test de Hotelling, 
