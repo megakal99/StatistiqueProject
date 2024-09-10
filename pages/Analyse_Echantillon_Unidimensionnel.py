@@ -31,11 +31,24 @@ def validateDataQuality():
     elif data.shape[1] != 1:
         st.error("Le nombre de variables (colonnes) est supérieur à 1. Cette analyse est unidimensionnelle. Veuillez utiliser un jeu de données contenant une seule variable numérique continue!")
         st.stop()
-    elif data.isnull().sum().sum()>0:
-        data.dropna(inplace=True)
-        st.warning("Les valeurs manquantes ont été détectées et les lignes concernées ont été supprimées.")
     else:
         pass
+    
+    # Vérifier s'il y'a des valeurs manquantes
+    if data.isnull().sum().sum()>0:
+        data.dropna(inplace=True)
+        st.warning("Les valeurs manquantes ont été détectées et les lignes concernées ont été supprimées.")
+    
+    # identifier les lignes dupliquées en se basant sur toutes les colonnes (2 variables: une variable d'identification des observations et une variable binaire)
+    dups = data.duplicated()
+    # compter le nombre de lignes dupliquées
+    dup_count = dups.sum()
+    # Vérifier s'il y'a des duplications ou pas
+    if dup_count:
+        # Supprimer toutes les lignes dupliquées
+        data.drop_duplicates(inplace=True)
+        st.warning("Les observations (lignes) dupliquées ont été détectées et ont été supprimées.")
+        
     # Vérifier si les valeurs ne sont pas numériques
     try:
         pd.to_numeric(data.iloc[:,0])
