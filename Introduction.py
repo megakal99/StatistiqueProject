@@ -90,8 +90,7 @@ st.header('Conseils')
 st.markdown("""
     ● Avant de commencer, assurez-vous d'avoir la moyenne attendue (ou la proportion) de la population.
 
-    ● Pour l'analyse unidimensionnelle binaire, après avoir téléversé (upload) les données de l'échantillon et saisi la moyenne hypothétique de la population, les résultats du test statistique seront affichés immédiatement. Ces résultats seront basés sur la proportion de la catégorie choisie par défaut. Il est important de vérifier si cette catégorie correspond bien à celle que vous souhaitez analyser. Si ce n'est pas le cas, sélectionnez l'autre catégorie pour refaire le test et obtenir des résultats fiables.
-    
+    ● Pour l'analyse unidimensionnelle binaire, après avoir téléversé (upload) les données de l'échantillon et saisi la moyenne hypothétique de la population, veuillez choisir la catégorie que vous souhaitez analyser (la catégorie représentant une valeur de 1 ou un cas de succès, par example, la catégorie vrai), pour compléter l'analyse.    
     """)
 
 st.header('Analyse Multidimensionnelle pour la Validation de l\'Échantillon')
