@@ -90,7 +90,7 @@ st.header('Conseils')
 st.markdown("""
     ● Avant de commencer, assurez-vous d'avoir la moyenne attendue (ou la proportion) de la population.
 
-    ● Pour l'analyse unidimensionnelle binaire, après avoir téléversé (upload) les données de l'échantillon et saisi la moyenne ou la proportion hypothétique de la population, veuillez choisir la catégorie que vous souhaitez analyser (la catégorie représentant une valeur de 1 ou un cas de succès, par exemple, la catégorie "vrai" ou "anaomlie" ou "1"). Ensuite, cliquez sur le bouton "Analyser" pour compléter l'analyse
+    ● Pour l'analyse unidimensionnelle binaire, après avoir téléversé (upload) les données de l'échantillon et saisi la moyenne ou la proportion hypothétique de la population, veuillez choisir la catégorie que vous souhaitez analyser (la catégorie représentant une valeur de 1 ou un cas de succès, par exemple, la catégorie "vrai" ou "anaomlie" ou "1"). Ensuite, cliquez sur le bouton "Analyser" pour compléter l'analyse.
     """)
 
 st.header('Analyse Multidimensionnelle pour la Validation de l\'Échantillon')
