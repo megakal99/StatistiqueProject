@@ -140,8 +140,6 @@ st.markdown("""
         
     ● Il est préférable d'utiliser un échantillon de taille supérieure à 500.
     
-    ● Il est impératif de s'assurer qu'il n'y a pas de duplications (plusieurs lignes ou observations dans l'échantillon sont identiques en termes de toutes leurs valeurs) parmi les observations de l'échantillon multidimensionnel, ainsi que de l'échantillon unidimensionnel quantitatif continu. 
-
     ● Si votre échantillon inclut une variable binaire cible qui résume ou regroupe toutes les autres variables, veuillez d'abord utiliser un test unidimensionnel binaire. Si ce test est validé (c'est-à-dire si l'hypothèse nulle ne peut pas être rejetée), appliquez ensuite une analyse multidimensionnelle.
     
     ● Il est obligatoire de supprimer la variable (la colonne) qui est utilisée uniquement pour identifier l'observation (par exemple le numéro de dossier), avant de procéder à une analyse unidimensionnelle quantitative ou à une analyse multidimensionnelle. En revanche, pour l'analyse binaire unidimensionnelle, la colonne d'identification doit être conservée et doit être la première colonne dans le jeu de données de l'échantillon.
