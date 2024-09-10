@@ -86,11 +86,11 @@ st.markdown("""
         ● Pour les échantillons quantitatifs, effectuez directement une analyse multidimensionnelle si cela est possible, car elle inclut la comparaison des moyennes (la moyenne attendue de la population et la moyenne de l'échantillon), rendant ainsi l'analyse unidimensionnelle superflue. En revanche, pour les échantillons binaires, commencez par une analyse unidimensionnelle binaire de la variable ou de la caractéristique ciblée. Ensuite, passez à l'analyse multidimensionnelle si possible (c'est-à-dire si l'échantillon contient plusieurs variables).        
 """)
 
-st.header('Conseils')
+st.header('Conseils pour éviter les erreurs dans l’application lors d’une analyse unidimensionnelle')
 st.markdown("""
-    ● Avant de commencer, assurez-vous d'avoir la moyenne attendue (ou la proportion) de la population.
+    ● Avant de cliquer sur le bouton "Analyser", assurez-vous que la moyenne attendue (ou la proportion) de la population a été saisie.
 
-    ● Pour l'analyse unidimensionnelle binaire, après avoir téléversé (upload) les données de l'échantillon et saisi la moyenne ou la proportion hypothétique de la population, veuillez choisir la catégorie que vous souhaitez analyser (la catégorie représentant une valeur de 1 ou un cas de succès, par exemple, la catégorie "vrai" ou "anaomlie" ou "1"). Ensuite, cliquez sur le bouton "Analyser" pour compléter l'analyse.
+    ● Pour l'analyse unidimensionnelle binaire, après avoir téléversé les données de l'échantillon et saisi la moyenne ou la proportion hypothétique de la population, veuillez choisir la catégorie que vous souhaitez analyser (la catégorie représentant une valeur de 1 ou un cas de succès, par exemple, la catégorie "vrai", "anomalie" ou "1"). Ensuite, cliquez sur le bouton "Analyser" pour compléter l'analyse.
     """)
 
 st.header('Analyse Multidimensionnelle pour la Validation de l\'Échantillon')
