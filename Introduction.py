@@ -26,7 +26,7 @@ st.markdown("""
     ● Évaluez si la variabilité au sein de l'échantillon est conforme à celle attendue dans la population, en vous basant sur des données historiques ou des critères établis, ou encore sur des hypothèses fondées sur l'expertise métier en assurance. (Kruskal-Wallis)
     
     L'objectif est de déterminer si un échantillon peut être extrapolé de manière fiable à la population entière en se fondant sur ces critères.
-    L'application se compose de 5 pages ou sections, dont 3 visent à valider si l'échantillon respecte un ou plusieurs de ces critères statistiques.
+    L'application se compose de 5 pages ou sections, dont 3 visent à valider si l'échantillon répond un ou plusieurs de ces critères statistiques.
     Veuillez suivre les instructions de chaque page ainsi que les concepts théoriques présentés pour obtenir des conclusions précises sur la possibilité d'extrapolation des résultats fournis par l'échantillon à la population.
     """)
 
