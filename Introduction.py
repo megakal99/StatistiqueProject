@@ -32,12 +32,13 @@ st.markdown("""
 
 st.header('Section d\'Analyse d\'Échantillon Unidimensionnel (Une seule Variable Quantitative qui sera étudiée)')
 st.markdown("""
-    Cette section est utile lorsque votre échantillon ne contient qu'une seule mesure quantitative (variable numérique continue, comme le salaire, Âge). Elle vous permet de déterminer si la moyenne de votre échantillon n'est pas similaire statistiquement à celle de la population.
+    Cette section est utile lorsque votre échantillon ne contient qu'une seule variable numérique continue (par example la prime d'assurance, le montant de la réclamation). 
+    Elle vous permet de déterminer si la moyenne de votre échantillon n'est pas similaire statistiquement à celle de la population.
     """)
 
 st.header('Section d\'Analyse d\'Échantillon Unidimensionnel Binaire')
 st.markdown("""
-    Utilisez cette section si votre échantillon ne comporte qu'une seule caractéristique (variable) binaire avec deux catégories, telles que 0/1, Faux/Vrai, ou Pas d'anomalie/Anomalie. Cette section vous permettra de vérifier si la proportion de cas vrais ou la moyenne observée dans votre échantillon (ou un sous-échantillon) est significativement différente de celle de la population.
+    Utilisez cette section si votre échantillon ne comporte qu'une seule variable binaire (variable catégorielle qui prend uniquement deux valeurs distinctes, comme 0 et 1, représentant deux catégories opposées), telles que la variable sinistre déclaré, réclamation frauduleuse. Cette section vous permettra de vérifier si la proportion de cas vrais ou la moyenne observée dans votre échantillon (ou un sous-échantillon) est significativement différente de celle de la population.
     
     """)
 
@@ -142,7 +143,7 @@ st.markdown("""
     
     ● Si votre échantillon inclut une variable binaire cible qui résume ou regroupe toutes les autres variables, veuillez d'abord utiliser un test unidimensionnel binaire. Si ce test est validé (c'est-à-dire si l'hypothèse nulle ne peut pas être rejetée), appliquez ensuite une analyse multidimensionnelle.
     
-    ● Il est obligatoire de supprimer la variable (la colonne) qui est utilisée uniquement pour identifier l'observation (par exemple le numéro de dossier), avant de procéder à une analyse unidimensionnelle quantitative ou à une analyse multidimensionnelle. En revanche, pour l'analyse binaire unidimensionnelle, la colonne d'identification doit être conservée et doit être la première colonne dans le jeu de données de l'échantillon.
+    ● Il est obligatoire de supprimer la variable (la colonne) qui est utilisée uniquement pour identifier l'observation (par exemple le numéro de dossier), avant de procéder à une analyse unidimensionnelle quantitative (variable continue ou à une analyse multidimensionnelle. En revanche, pour l'analyse binaire unidimensionnelle, la colonne d'identification doit être conservée et doit être la première colonne dans le jeu de données de l'échantillon.
 
     ● Pour l'analyse multidimensionnelle, si une proportion importante de résultats indique que l'échantillon n'est pas représentatif de la population (par exemple, si plus de 5 % des résultats montrent un manque de représentativité significative), vous pouvez tester des sous-échantillons extraits aléatoirement de l'échantillon principal (jusqu'à 10 sous-échantillons, en fonction de la taille de l'échantillon). Parfois, un sous-échantillon peut être plus représentatif de la population cible.
 
