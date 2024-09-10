@@ -32,7 +32,7 @@ st.markdown("""
 
 st.header('Section d\'Analyse d\'Échantillon Unidimensionnel (Une seule Variable Quantitative qui sera étudiée)')
 st.markdown("""
-    Cette section est utile lorsque votre échantillon ne contient qu'une seule mesure quantitative (variable numérique continue, comme le salaire, Âge). Elle vous permet de déterminer si la moyenne de votre échantillon n'est pas similaire à celle de la population.
+    Cette section est utile lorsque votre échantillon ne contient qu'une seule mesure quantitative (variable numérique continue, comme le salaire, Âge). Elle vous permet de déterminer si la moyenne de votre échantillon n'est pas similaire statistiquement à celle de la population.
     """)
 
 st.header('Section d\'Analyse d\'Échantillon Unidimensionnel Binaire')
