@@ -121,7 +121,6 @@ def HandleBinaryCategVariable():
         pass
     else:
         values = list(unique_values)
-        st.warning(f"Les données ne semblent pas être directement binaires (0 et 1), mais plutôt modalités {values}. Veuillez les changer par 0 et 1.")
         # Demander à l'utilisateur de choisir quelle catégorie représente la valeur vraie (1)
         selected_true_value = st.selectbox(
             "Choisissez la catégorie qui doit être considérée comme 'Vrai' (1):",
