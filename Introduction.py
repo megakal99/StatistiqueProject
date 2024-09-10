@@ -17,13 +17,13 @@ st.header('Introduction')
 st.markdown("""
     Bienvenue dans l'application d'analyse statistique pour les dossiers d'assurance de Sanlam. Cet outil est conçu pour évaluer la représentativité des échantillons en fonction de divers critères et tests statistiques, notamment :
 
-    ● La comparaison des moyennes : Comparez la moyenne des valeurs observées dans l'échantillon avec la moyenne attendue ou hypothétique de la population, en utilisant des références basées sur l'expertise métier ou les données historiques massives.(zTest, tTest, Hotteling test, Binomial test)
+    ● La comparaison des moyennes : Comparez la moyenne des valeurs observées dans l'échantillon avec la moyenne attendue ou hypothétique de la population, en utilisant des références basées sur l'expertise métier ou les données historiques massives.
     
-    ● La comparaison des proportions des catégories : Comparez la répartition des catégories dans l'échantillon avec celle attendue dans la population, en vous appuyant sur des données historiques ou l'expertise métier. (Chi-deux test)
+    ● La comparaison des proportions des catégories : Comparez la répartition des catégories dans l'échantillon avec celle attendue dans la population, en vous appuyant sur des données historiques ou l'expertise métier. 
     
-    ● L'analyse de la dépendance et de l'indépendance : Examinez les relations entre les variables quantitatives et catégorielles, ainsi qu'entre les variables catégorielles, pour vérifier si elles correspondent aux attentes théoriques ou aux tendances hypothétiques. (Kruskal Wallis test, Chi-deux test)
+    ● L'analyse de la dépendance et de l'indépendance : Examinez les relations entre les variables quantitatives et catégorielles, ainsi qu'entre les variables catégorielles, pour vérifier si elles correspondent aux attentes théoriques ou aux tendances hypothétiques. 
     
-    ● Évaluez si la variabilité au sein de l'échantillon est conforme à celle attendue dans la population, en vous basant sur des données historiques ou des critères établis, ou encore sur des hypothèses fondées sur l'expertise métier en assurance. (Kruskal-Wallis)
+    ● Évaluez si la variabilité au sein de l'échantillon est conforme à celle attendue dans la population, en vous basant sur des données historiques ou des critères établis, ou encore sur des hypothèses fondées sur l'expertise métier en assurance.
     
     L'objectif est de déterminer si un échantillon peut être extrapolé de manière fiable à la population entière en se fondant sur ces critères.
     L'application se compose de 5 pages ou sections, dont 3 visent à valider si l'échantillon respecte un ou plusieurs de ces critères statistiques.
