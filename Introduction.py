@@ -15,7 +15,6 @@ st.set_page_config(
 st.title("Guide et documentation de l'application 💡")
 st.header('Introduction')
 st.markdown("""
-    st.markdown("""
     Bienvenue dans l\'application d\'analyse statistique pour les dossiers d'assurance de Sanlam. Cet outil est conçu pour évaluer la représentativité des échantillons en fonction de divers critères et tests statistiques, notamment :
 
     ● La comparaison des moyennes : Comparez la moyenne des valeurs observées dans l'échantillon avec la moyenne attendue ou hypothétique de la population, en utilisant des références basées sur l'expertise métier ou les données historiques massives. (zTest, tTest, Hotteling test, Binomial test)
