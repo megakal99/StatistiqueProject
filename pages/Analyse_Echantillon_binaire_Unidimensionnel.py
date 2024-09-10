@@ -142,7 +142,7 @@ def z_test(population_prop,sample_prop=mean_sample,sample_size=sample_size,alpha
 
     Retourne :
     - result1 : DataFrame contenant les statistiques descriptives de l'échantillon
-    - result2 : DataFrame contenant les résultats du test binomial
+    - result2 : DataFrame contenant les statistiques du Ztest, avec une conclusion
     """
     st.divider()
     st.header("Résultats d'Analyse")
@@ -206,7 +206,7 @@ def binomial_test_result(population_prop,sample_prop=mean_sample,sample_size=sam
 
     Retourne :
     - result1 : DataFrame contenant les statistiques descriptives de l'échantillon
-    - result2 : DataFrame contenant les résultats du test binomial
+    - result2 : DataFrame contenant les statistiques du test binomial, avec une conclusion
     """
     
     # Calculer l'ecart type
