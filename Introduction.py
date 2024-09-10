@@ -156,7 +156,7 @@ st.markdown("""
     """)
 st.header('Conclusion')
 st.markdown("""
-    ● Les tests statistiques utilisés dans notre analyse nécessitent des informations sur la population, telles que la moyenne hypothétique, afin de comparer ces informations avec celles de l'échantillon. Bien que cela puisse être considéré comme une limitation, il est important de noter que, dans le contexte de l'échantillonnage, l'accès à ces informations sur la population est essentiel. Ces données peuvent être fournies par la pratique ou l'expertise métier, et permettent de valider les résultats de l'échantillon par rapport aux attentes de la population.
+    ● Les tests statistiques utilisés dans notre analyse nécessitent des informations sur la population, telles que la moyenne hypothétique, afin de comparer ces informations avec celles de l'échantillon. Bien que cela puisse être considéré comme une limitation, il est important de noter que, dans le contexte de l'échantillonnage, l'accès à ces informations sur la population est essentiel. Ces données peuvent être fournies par la pratique ou l'expertise métier.
             
     ● L'application simplifie l'évaluation de la représentativité de vos échantillons par rapport à une population. En suivant ces étapes et en comprenant les résultats, vous pouvez prendre des décisions éclairées fondées sur des analyses statistiques rigoureuses.
     """)
