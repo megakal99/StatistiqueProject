@@ -106,7 +106,11 @@ def generate_binary_dataframe(size):
     Retourne :
         df (DataFrame) : DataFrame pandas contenant les données binaires.
     """
-    return pd.DataFrame(np.random.randint(0, 2, size=size), columns=['binary_column'])
+    df = pd.DataFrame({
+        'number_column': np.arange(1, size + 1),  # Colonne de référence
+        'binary_column': np.random.randint(0, 2, size=size)  # Colonne binaire aléatoire
+    })
+    return df
 ########################################################################
 def HandleBinaryCategVariable():
     """
@@ -395,7 +399,7 @@ if data_choice == "Uploader un fichier":
 
 elif data_choice == "Générer des données aléatoires":
     data_size = st.sidebar.number_input("Taille de l'échantillon", min_value=2000, max_value=50000, value=2000)
-    data=generate_binary_dataframe((data_size,1))
+    data=generate_binary_dataframe(data_size)
 
 population_expected_mean = st.sidebar.number_input("Moyenne (proportion) attendue de la population (requis)", min_value=0.01, max_value=1.0, value=None)
 alpha = st.sidebar.slider("Niveau de signification (alpha)", min_value=0.01, max_value=0.10, value=0.05, step=0.01)
