@@ -399,7 +399,7 @@ if data_choice == "Uploader un fichier":
 
 elif data_choice == "Générer des données aléatoires":
     data_size = st.sidebar.number_input("Taille de l'échantillon", min_value=2000, max_value=50000, value=2000)
-    data=generate_binary_dataframe(data_size)
+    data=generate_binary_dataframe((data_size,1))
 
 population_expected_mean = st.sidebar.number_input("Moyenne (proportion) attendue de la population (requis)", min_value=0.01, max_value=1.0, value=None)
 alpha = st.sidebar.slider("Niveau de signification (alpha)", min_value=0.01, max_value=0.10, value=0.05, step=0.01)
