@@ -8,3 +8,4 @@ openpyxl
 seaborn
 pingouin
 XlsxWriter
+python-dotenv

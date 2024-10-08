@@ -561,63 +561,70 @@ def HandlePossibleCases(data):
             pass             
                         
 ####################################################################
-# Le titre de la page et la description
-st.title("Analyse de l'Echantillon")
-# Initialize data variable in session state
-if 'data' not in st.session_state:
-        st.session_state.data = None
-if 'alpha' not in st.session_state:
-        st.session_state.alpha = 0.05
-if 'Qvars' not in st.session_state:
-        st.session_state.Qvars = None
-if 'Cvars' not in st.session_state:
-        st.session_state.Cvars = None
-if 'trigger' not in st.session_state:
-        st.session_state.trigger = 0
-data=None 
-trigger=0   
-st.sidebar.header("Paramètres")
-data_choice = st.sidebar.selectbox("Source des données", ("Uploader un fichier", "Générer des données aléatoires"))
-if data_choice == "Uploader un fichier":
-    uploaded_file = st.sidebar.file_uploader("Uploader un fichier Excel ou CSV contenant les données", type=["xlsx", "csv"])
-    if uploaded_file is not None:
-        if uploaded_file.name.endswith('.csv'):
-            data = pd.read_csv(uploaded_file)
-            validateData()
-            nbrQvar,nbrCvar=definePossibleCases(data)
-            alpha = st.sidebar.slider("Niveau de signification (alpha)", min_value=0.01, max_value=0.10, value=0.05, step=0.01)
-            trigger=1
-        elif uploaded_file.name.endswith('.xlsx'):
-            data = pd.read_excel(uploaded_file, engine='openpyxl')
-            validateData()
-            nbrQvar,nbrCvar=definePossibleCases(data)
-            alpha = st.sidebar.slider("Niveau de signification (alpha)", min_value=0.01, max_value=0.10, value=0.05, step=0.01)
-            trigger=1
-        else:
-            st.error("Le format de fichier n'est pas pris en charge.")
-            st.stop()
-        st.session_state.data = data
-        st.session_state.alpha = alpha
-        st.session_state.Qvars = numeric_columnsList
-        st.session_state.Cvars = Categorical_variables
-        st.session_state.trigger = trigger
-
-elif data_choice == "Générer des données aléatoires":
-    data_size = st.sidebar.number_input("Taille de l'échantillon", min_value=1800,max_value=8000,value=1800)
-    nbrQvar= st.sidebar.number_input("le nombre des variables quantitatives à générer", min_value=2, max_value=5)
-    nbrCvar= st.sidebar.number_input("le nombre des variables qualitatives à générer", min_value=2, max_value=5)
-    alpha = st.sidebar.slider("Niveau de signification (alpha)", min_value=0.01, max_value=0.10, value=0.05, step=0.01)
-    data,centreInertie=generate_multidimensional_data(data_size,nbrQvar,nbrCvar)
-    definePossibleCases(data)
-    trigger=1
-    st.session_state.data = data
-    st.session_state.alpha = alpha
-    st.session_state.Qvars = numeric_columnsList
-    st.session_state.Cvars = Categorical_variables
-    st.session_state.trigger = trigger
-
-if st.session_state.trigger:
-    DispalyStats(st.session_state.data,len(st.session_state.Qvars),len(st.session_state.Cvars))
+# Initialiser l'état de la session pour le statut d'accès et le nombre de tentatives d'accès
+if 'logged_in' not in st.session_state:
+    st.session_state.logged_in = False
     
+if st.session_state.logged_in:
+        # Le titre de la page et la description
+        st.title("Analyse de l'Echantillon")
+        # Initialize data variable in session state
+        if 'data' not in st.session_state:
+                st.session_state.data = None
+        if 'alpha' not in st.session_state:
+                st.session_state.alpha = 0.05
+        if 'Qvars' not in st.session_state:
+                st.session_state.Qvars = None
+        if 'Cvars' not in st.session_state:
+                st.session_state.Cvars = None
+        if 'trigger' not in st.session_state:
+                st.session_state.trigger = 0
+        data=None 
+        trigger=0   
+        st.sidebar.header("Paramètres")
+        data_choice = st.sidebar.selectbox("Source des données", ("Uploader un fichier", "Générer des données aléatoires"))
+        if data_choice == "Uploader un fichier":
+            uploaded_file = st.sidebar.file_uploader("Uploader un fichier Excel ou CSV contenant les données", type=["xlsx", "csv"])
+            if uploaded_file is not None:
+                if uploaded_file.name.endswith('.csv'):
+                    data = pd.read_csv(uploaded_file)
+                    validateData()
+                    nbrQvar,nbrCvar=definePossibleCases(data)
+                    alpha = st.sidebar.slider("Niveau de signification (alpha)", min_value=0.01, max_value=0.10, value=0.05, step=0.01)
+                    trigger=1
+                elif uploaded_file.name.endswith('.xlsx'):
+                    data = pd.read_excel(uploaded_file, engine='openpyxl')
+                    validateData()
+                    nbrQvar,nbrCvar=definePossibleCases(data)
+                    alpha = st.sidebar.slider("Niveau de signification (alpha)", min_value=0.01, max_value=0.10, value=0.05, step=0.01)
+                    trigger=1
+                else:
+                    st.error("Le format de fichier n'est pas pris en charge.")
+                    st.stop()
+                st.session_state.data = data
+                st.session_state.alpha = alpha
+                st.session_state.Qvars = numeric_columnsList
+                st.session_state.Cvars = Categorical_variables
+                st.session_state.trigger = trigger
 
-    
+        elif data_choice == "Générer des données aléatoires":
+            data_size = st.sidebar.number_input("Taille de l'échantillon", min_value=1800,max_value=8000,value=1800)
+            nbrQvar= st.sidebar.number_input("le nombre des variables quantitatives à générer", min_value=2, max_value=5)
+            nbrCvar= st.sidebar.number_input("le nombre des variables qualitatives à générer", min_value=2, max_value=5)
+            alpha = st.sidebar.slider("Niveau de signification (alpha)", min_value=0.01, max_value=0.10, value=0.05, step=0.01)
+            data,centreInertie=generate_multidimensional_data(data_size,nbrQvar,nbrCvar)
+            definePossibleCases(data)
+            trigger=1
+            st.session_state.data = data
+            st.session_state.alpha = alpha
+            st.session_state.Qvars = numeric_columnsList
+            st.session_state.Cvars = Categorical_variables
+            st.session_state.trigger = trigger
+
+        if st.session_state.trigger:
+            DispalyStats(st.session_state.data,len(st.session_state.Qvars),len(st.session_state.Cvars))
+else:
+        st.warning("⛔ Accès refusé. Veuillez vous assurer que vous validez votre accès.")
+     
+
+            

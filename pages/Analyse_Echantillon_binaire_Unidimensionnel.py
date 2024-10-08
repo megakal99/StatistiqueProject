@@ -74,10 +74,7 @@ def validate_data():
         mean_sample = data['Transformed_Binary'].mean()
     except Exception:
         mean_sample = data.iloc[:,1].mean()
-        # if sample_size>=population_size:
-        #     st.error("La taille de l'échantillon est supérieure ou égale à la taille de la population. C'est illogique !\nVeuillez vérifier la taille de l'échantillon ou le nombre d'observations de la population que vous avez entré.")
-        #     st.stop()
-        # else:
+        
     # Estimation de la taille d'échantillon significative pour faire le test z et garder la meme marge d'erreur alpha
     z_score = stats.norm.ppf(1 - alpha / 2)
     estimated_sample_size=int((z_score**2)*float(population_expected_mean)*(1-float(population_expected_mean))/(alpha**2))
@@ -379,55 +376,60 @@ def plot_binary_distribution_pie(data):
     plt.tight_layout()
     st.pyplot(fig)
 ##################################################################################
-# Le titre de la page et la description
-st.title("Analyse de l'Echantillon Binaire")
+# Initialiser l'état de la session pour le statut d'accès et le nombre de tentatives d'accès
+if 'logged_in' not in st.session_state:
+    st.session_state.logged_in = False
 
-st.sidebar.header("Paramètres")
-data_choice = st.sidebar.selectbox("Source des données", ("Uploader un fichier", "Générer des données aléatoires"))
-if data_choice == "Uploader un fichier":
-    uploaded_file = st.sidebar.file_uploader("Uploader un fichier Excel ou CSV contenant les données", type=["xlsx", "csv"])
-    if uploaded_file is not None:
-        if uploaded_file.name.endswith('.csv'):
-            data = pd.read_csv(uploaded_file)
-            
-        elif uploaded_file.name.endswith('.xlsx'):
-            data = pd.read_excel(uploaded_file, engine='openpyxl')
-        else:
-            st.error("Le format de fichier n'est pas pris en charge.")
-            st.stop()
-        #population_size=st.sidebar.number_input("La Taille de la population (requis)", min_value=1, value=None)
+if st.session_state.logged_in:
+        # Le titre de la page et la description
+        st.title("Analyse de l'Echantillon Binaire")
 
-elif data_choice == "Générer des données aléatoires":
-    data_size = st.sidebar.number_input("Taille de l'échantillon", min_value=2000, max_value=50000, value=2000)
-    data=generate_binary_dataframe(data_size)
+        st.sidebar.header("Paramètres")
+        data_choice = st.sidebar.selectbox("Source des données", ("Uploader un fichier", "Générer des données aléatoires"))
+        if data_choice == "Uploader un fichier":
+            uploaded_file = st.sidebar.file_uploader("Uploader un fichier Excel ou CSV contenant les données", type=["xlsx", "csv"])
+            if uploaded_file is not None:
+                if uploaded_file.name.endswith('.csv'):
+                    data = pd.read_csv(uploaded_file)
+                    
+                elif uploaded_file.name.endswith('.xlsx'):
+                    data = pd.read_excel(uploaded_file, engine='openpyxl')
+                else:
+                    st.error("Le format de fichier n'est pas pris en charge.")
+                    st.stop()
 
-population_expected_mean = st.sidebar.number_input("Moyenne (proportion) attendue de la population (requis)", min_value=0.01, max_value=1.0, value=None)
-alpha = st.sidebar.slider("Niveau de signification (alpha)", min_value=0.01, max_value=0.10, value=0.05, step=0.01)
+        elif data_choice == "Générer des données aléatoires":
+            data_size = st.sidebar.number_input("Taille de l'échantillon", min_value=2000, max_value=50000, value=2000)
+            data=generate_binary_dataframe(data_size)
 
-if population_expected_mean and alpha: #and population_size :
-    check=validate_data()
-button=st.sidebar.button('Analyser',key='AnalyserButton')
-if button:
-    if check=='z_test':
-        df1,df2=z_test(population_expected_mean,alpha)
-    else:
-        df1,df2=binomial_test_result(population_expected_mean,sample_prop=mean_sample,sample_size=sample_size,data=data,alpha=alpha)
-    st.write("Statistiques descriptives :")
-    st.table(df1)
-    st.write("Résultats du test d'hypothèse :")
-    st.table(df2)
-    plot_binary_distribution_pie(data)
+        population_expected_mean = st.sidebar.number_input("Moyenne (proportion) attendue de la population (requis)", min_value=0.01, max_value=1.0, value=None)
+        alpha = st.sidebar.slider("Niveau de signification (alpha)", min_value=0.01, max_value=0.10, value=0.05, step=0.01)
 
-    if "❌" in df2['test_result'][0]:
-        verf,sub_sample_prop=findRepresentativeSubSample(data,population_expected_mean, alpha)
-        st.header('Conclusion générale')
-        if verf:
-           st.write(f"L'extrapolation des résultats fournis par cet échantillon sur la population totale devrait être faite en se référant à la moyenne ou la proportion de sous-échantillon {round(sub_sample_prop,2)}, sous réserve de confirmation de la représentativité de l'échantillon à travers une analyse multidimensionnelle.")
-        else:
-           st.write(f"L'extrapolation des résultats fournis par cet échantillon n'est pas possible.")
- 
-    else:
-        st.header('Conclusion générale')
-        st.write(f"L'extrapolation des résultats fournis par cet échantillon sur la population totale devrait être faite en se référant à la moyenne de l'échantillon {round(mean_sample,2)}, sous réserve de confirmation de la représentativité de l'échantillon à travers une analyse multidimensionnelle.")
+        if population_expected_mean and alpha: #and population_size :
+            check=validate_data()
+        button=st.sidebar.button('Analyser',key='AnalyserButton')
+        if button:
+            if check=='z_test':
+                df1,df2=z_test(population_expected_mean,alpha)
+            else:
+                df1,df2=binomial_test_result(population_expected_mean,sample_prop=mean_sample,sample_size=sample_size,data=data,alpha=alpha)
+            st.write("Statistiques descriptives :")
+            st.table(df1)
+            st.write("Résultats du test d'hypothèse :")
+            st.table(df2)
+            plot_binary_distribution_pie(data)
+
+            if "❌" in df2['test_result'][0]:
+                verf,sub_sample_prop=findRepresentativeSubSample(data,population_expected_mean, alpha)
+                st.header('Conclusion générale')
+                if verf:
+                  st.write(f"L'extrapolation des résultats fournis par cet échantillon sur la population totale devrait être faite en se référant à la moyenne ou la proportion de sous-échantillon {round(sub_sample_prop,2)}, sous réserve de confirmation de la représentativité de l'échantillon à travers une analyse multidimensionnelle.")
+                else:
+                  st.write(f"L'extrapolation des résultats fournis par cet échantillon n'est pas possible.")
         
-
+            else:
+                st.header('Conclusion générale')
+                st.write(f"L'extrapolation des résultats fournis par cet échantillon sur la population totale devrait être faite en se référant à la moyenne de l'échantillon {round(mean_sample,2)}, sous réserve de confirmation de la représentativité de l'échantillon à travers une analyse multidimensionnelle.")
+                
+else:
+        st.warning("⛔ Accès refusé. Veuillez vous assurer que vous validez votre accès.")
