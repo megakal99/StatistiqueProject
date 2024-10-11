@@ -3,7 +3,7 @@
     0- Installer Docker : Assurez-vous que Docker est installé sur votre pc.
     1- Vérifiez que le dossier du projet se trouve sur votre PC, puis accédez-y via le terminal.
     2- Construire l'image Docker par l'exécution la commande bash suivante:
-    docker build -t statsapp .
+    docker build -t statsapp:latest .
 
     # Note : statsapp est le nom de l'image Docker. Vous pouvez choisir un autre nom si vous le souhaitez.
     3- Exécuter le conteneur Docker par la commande bash suivante :
@@ -19,7 +19,7 @@
     1- Installer Docker : Assurez-vous que Docker est installé sur le serveur.
     2- Transférer ou cloner le projet : Vous pouvez transférer le dossier du projet vers le serveur en utilisant scp ou rsync, ou le cloner directement depuis Git après avoir créé un dépôt et chargé le dossier du projet sur votre compte GitHub personnel ou d'entreprise.
     3- Accéder à le dossier transféré et construire l'image Docker par l'exécution la commande bash suivante:
-    docker build -t statsapp .
+    docker build -t statsapp:latest .
 
     Note : statsapp est le nom de l'image Docker. Vous pouvez choisir un autre nom si vous le souhaitez.
     4- Exécuter le conteneur Docker par la commande bash suivante :
