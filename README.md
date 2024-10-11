@@ -17,7 +17,7 @@
 
     0- Accéder au serveur : Connectez-vous au serveur où vous souhaitez déployer l'application.
     1- Installer Docker : Assurez-vous que Docker est installé sur le serveur.
-    2- Transférer ou cloner le projet : Vous pouvez transférer le dossier du projet vers le serveur en utilisant scp ou rsync, ou le cloner directement depuis Git après avoir      créé un dépôt et chargé le dossier du projet sur votre compte GitHub personnel ou d'entreprise.
+    2- Transférer ou cloner le projet : Vous pouvez transférer le dossier du projet vers le serveur en utilisant scp ou rsync, ou le cloner directement depuis Git après avoir créé un dépôt et chargé le dossier du projet sur votre compte GitHub personnel ou d'entreprise.
     3- Accéder à le dossier transféré et construire l'image Docker par l'exécution la commande bash suivante:
     docker build -t statsapp .
 
