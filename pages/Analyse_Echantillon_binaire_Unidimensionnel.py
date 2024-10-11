@@ -43,7 +43,7 @@ def validate_data():
     
     if data.shape[1] != 2:
         if data.shape[1] == 3 and 'Transformed_Binary' in list(data.columns):
-            data=data.iloc[:,[0,1]]
+            pass
         else:
             st.error("Le nombre de variables (colonnes) doit être égal à 2 : la première colonne pour la variable identifiant les observations ou les dossiers, et la deuxième colonne pour la variable binaire qui sera étudiée dans notre test.\nCette analyse est unidimensionnelle.")
             st.stop()
