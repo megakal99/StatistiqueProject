@@ -579,7 +579,7 @@ if st.session_state.logged_in:
                 st.session_state.Cvars = None
         if 'trigger' not in st.session_state:
                 st.session_state.trigger = 0
-        data=None 
+        data=st.session_state.data 
         trigger=0   
         st.sidebar.header("Paramètres")
         data_choice = st.sidebar.selectbox("Source des données", ("Uploader un fichier", "Générer des données aléatoires"))
@@ -621,6 +621,9 @@ if st.session_state.logged_in:
             st.session_state.Cvars = Categorical_variables
             st.session_state.trigger = trigger
 
+        if data is None:
+            st.warning("Veuillez téléverser ou générer votre jeu de données.")
+            st.stop()
         if st.session_state.trigger:
             DispalyStats(st.session_state.data,len(st.session_state.Qvars),len(st.session_state.Cvars))
 else:

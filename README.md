@@ -1,7 +1,7 @@
 ### Déploiement sur votre PC local
 
     0- Installer Docker : Assurez-vous que Docker est installé sur votre pc.
-    1- Vérifiez que le dossier du projet se trouve sur votre PC, puis accédez-y via le terminal. 
+    1- Vérifiez que le dossier du projet se trouve sur votre PC, puis accédez-y via le terminal.
     2- Construire l'image Docker par l'exécution la commande bash suivante:
     docker build -t statsapp .
 

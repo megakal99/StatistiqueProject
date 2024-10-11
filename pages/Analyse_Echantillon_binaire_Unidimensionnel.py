@@ -20,19 +20,21 @@ st.set_page_config(
 )
 
 ###################################################"Global variable"
-data=None
+# Initialiser l'état de la session pour les données
+if 'data0' not in st.session_state:
+    st.session_state.data0 = None
+
+##############################################
+data = st.session_state.data0
 population_expected_mean=None
 mean_sample=None
 alpha=None
 sample_size=None
-#population_size=None
-check=None
-estimated_sample_size=None
-Taille_minimale=None
-Taille_maximale=None
+
+
 #############################################""
 def validate_data():
-    global data,mean_sample,sample_size,estimated_sample_size,Taille_minimale,Taille_maximale
+    global data,mean_sample,sample_size
 
     if data.shape[0]==2: 
         data = data.T
@@ -40,10 +42,11 @@ def validate_data():
         pass
     
     if data.shape[1] != 2:
-        st.error("Le nombre de variables (colonnes) doit être égal à 2 : la première colonne pour la variable identifiant les observations ou les dossiers, et la deuxième colonne pour la variable binaire qui sera étudiée dans notre test.\nCette analyse est unidimensionnelle.")
-        st.stop()
-    else:
-        pass
+        if data.shape[1] == 3 and 'Transformed_Binary' in list(data.columns):
+            data=data.iloc[:,[0,1]]
+        else:
+            st.error("Le nombre de variables (colonnes) doit être égal à 2 : la première colonne pour la variable identifiant les observations ou les dossiers, et la deuxième colonne pour la variable binaire qui sera étudiée dans notre test.\nCette analyse est unidimensionnelle.")
+            st.stop()
     
     # Vérifier s'il y'a des valeurs manquantes
     if data.isnull().sum().sum()>0:
@@ -67,29 +70,29 @@ def validate_data():
     else:
         st.error("La variable n'est pas binaire. Veuillez vérifier vos données!")
         st.stop()
-    # Check if the unique values are 0 and 1 and handle case of categorical values (False/True; Anomaly/Not Anomaly)
+    # Check if the unique values are 0 and 1 and handle case of categorical values (False/True; Anomaly/Not Anomaly...)
     HandleBinaryCategVariable()
     sample_size=data.shape[0]
     try:
         mean_sample = data['Transformed_Binary'].mean()
     except Exception:
         mean_sample = data.iloc[:,1].mean()
-        
+    
     # Estimation de la taille d'échantillon significative pour faire le test z et garder la meme marge d'erreur alpha
-    z_score = stats.norm.ppf(1 - alpha / 2)
-    estimated_sample_size=int((z_score**2)*float(population_expected_mean)*(1-float(population_expected_mean))/(alpha**2))
-    cond1=int(sample_size*population_expected_mean)>=5
-    cond2=int(sample_size*(1-population_expected_mean))>=5
-    estimated_sample_size=max(estimated_sample_size,30)
-    Taille_minimale=estimated_sample_size-int((alpha/2)*estimated_sample_size)
-    Taille_maximale=estimated_sample_size+int((alpha/2)*estimated_sample_size)
-    if sample_size>=Taille_minimale and sample_size<=Taille_maximale and cond1 and cond2:
-        st.warning(f"✅La taille d'échantillon {sample_size} est supérieur ou égale à {Taille_minimale} et inférieur ou égale à {Taille_maximale}. Donc notre échantillon a une taille significative pour avoir des résultats fiable du z-test.")
+    #z_score = stats.norm.ppf(1 - alpha / 2)
+    #_estimated_sample_size_to_fix_error_margin_ztest=int((z_score**2)*float(population_expected_mean)*(1-float(population_expected_mean))/(alpha**2))
+    val0=int(sample_size*mean_sample)
+    val1=int(sample_size*(1-mean_sample))
+    cond1=val0>=5
+    cond2=val1>=5
+    estimated_sample_size=max(30,val0,val1)
+    if sample_size>=estimated_sample_size and cond1 and cond2:
+        st.warning(f"La taille de l'échantillon ({sample_size}) est suffisante pour obtenir des résultats fiables du z-test.")
         # Faire le test z
         return 'ztest'
     else:
         # Faire le test Binomiale
-        st.warning(f"❌La taille d'échantillon {sample_size} n'est pas significative pour avoir une conclusion fiable pour le z-test. Donc on va baser sur les resultats de test binomial qui sera trés robuste et fiable dans ce cas.\n La taille significative pour réussir ou valider le z-test doit varier entre {Taille_minimale} et {Taille_maximale}")
+        st.warning(f"La taille de l'échantillon ({sample_size}) n'est pas suffisante pour utiliser le z-test. Par conséquent, l'analyse statistique se base sur le test binomial, qui est très robuste et fiable dans ce cas.")
         return 'test binomial'
 
 ###################################"####################################"
@@ -132,7 +135,7 @@ def HandleBinaryCategVariable():
         data['Transformed_Binary'] = np.where(data.iloc[:, 1] == selected_true_value, 1, 0)
             
 ############################################################################
-def z_test(population_prop,sample_prop=mean_sample,sample_size=sample_size,alpha=0.05):
+def z_test(population_prop,sample_prop=mean_sample,sample_size=sample_size,alpha=alpha):
     """
     Effectue un test z bilatéral pour comparer la proportion de l'échantillon à la proportion de la population.
 
@@ -145,9 +148,6 @@ def z_test(population_prop,sample_prop=mean_sample,sample_size=sample_size,alpha
     - result1 : DataFrame contenant les statistiques descriptives de l'échantillon
     - result2 : DataFrame contenant les statistiques du Ztest, avec une conclusion
     """
-    st.divider()
-    st.header("Résultats d'Analyse")
-    
     # Calculate standard error
     standard_error = (population_prop * (1 - population_prop) / sample_size) ** 0.5
     standard_sample= (sample_prop * (1 - sample_prop)) ** 0.5
@@ -163,7 +163,6 @@ def z_test(population_prop,sample_prop=mean_sample,sample_size=sample_size,alpha
     # Calculate confidence interval
     ci_lower = sample_prop - z_critical * standard_error
     ci_upper = sample_prop + z_critical * standard_error
-    print('*****************',sample_prop)
     test_result=(
     f"❌ L'hypothèse nulle est rejetée, ce qui démontre de manière significative une différence "
     f"entre la moyenne (la proportion) de l'échantillon et celle de la population. Ainsi, il est évident que "
@@ -188,7 +187,7 @@ def z_test(population_prop,sample_prop=mean_sample,sample_size=sample_size,alpha
         "p_value": [f'{round(p_value*100,2)}%'],
         "alpha": [f'{int(alpha*100)}%'],
         "critical_value": ["{:.2f}".format(z_critical)],
-        "interval de confiance":[f"[{round(ci_lower,2)},{round(ci_upper,2)}]"],
+        "interval de confiance":[f"[{round(ci_lower,4)},{round(ci_upper,4)}]"],
         "test_result": [f"{test_result}"]
         }
 
@@ -206,10 +205,9 @@ def binomial_test_result(population_prop,sample_prop=mean_sample,sample_size=sam
     - alpha : Niveau de significativité (par défaut, 0,05 pour un intervalle de confiance de 95 %)
 
     Retourne :
-    - result1 : DataFrame contenant les statistiques descriptives de l'échantillon
-    - result2 : DataFrame contenant les statistiques du test binomial, avec une conclusion
+    - result1 : DataFrame contenant les statistiques descriptives de l'échantillon.
+    - result2 : DataFrame contenant les statistiques du test binomial, avec une conclusion.
     """
-    
     # Calculer l'ecart type
     standard_sample= (sample_prop * (1 - sample_prop)) ** 0.5
     # Calculer le nombre de succès observés
@@ -218,7 +216,7 @@ def binomial_test_result(population_prop,sample_prop=mean_sample,sample_size=sam
     except Exception:
         nombre_de_succes = data[data.iloc[:,1]==1].shape[0]
 
-    # Effectuer le test binomial
+    # Effectuer le test binomial et calculer l'intervalle de confiance par la méthode exacte la plus conservatrice, Clopper-Pearson
     results = stats.binomtest(nombre_de_succes, sample_size, population_prop, alternative='two-sided')
     ci_lower=results.proportion_ci(confidence_level=1-alpha)[0]
     ci_upper=results.proportion_ci(confidence_level=1-alpha)[1]
@@ -247,10 +245,10 @@ def binomial_test_result(population_prop,sample_prop=mean_sample,sample_size=sam
         "p_value": [f'{round(results.pvalue * 100, 2)}%'],
         "alpha": [f'{int(alpha * 100)}%'],
         "critical_value": ["{:.2f}".format(results.statistic)],
-        "interval de confiance":[f"[{round(ci_lower,2)},{round(ci_upper,2)}]"],
+        "interval de confiance":[f"[{round(ci_lower,4)},{round(ci_upper,4)}]"],
         "test_result": [f"{test_result}"]
     }
-
+    
     result1 = pd.DataFrame(result1)
     result2 = pd.DataFrame(result2)
     
@@ -273,7 +271,7 @@ def testSubSample(testtype, sub_sample_prop, population_prop, subsample_size,dat
 
     if testtype == 'z_test':
         # Calculer l'écart-type pour le test Z
-        df1,df2=z_test(population_prop,sub_sample_prop,subsample_size, alpha)
+        df1,df2=z_test(population_prop,sub_sample_prop,subsample_size, alpha )
 
         # Évaluer la représentativité du sous-échantillon
         if '✅' in df2['test_result'][0]:
@@ -303,7 +301,6 @@ def findRepresentativeSubSample(data,population_prop, alpha=0.05, max_iterations
     bool: 1 si le résultat du test est positif sinon 0
     sub_sample_prop: Proportion du sous-échantillon (la fréquence des valeurs 1 estimée ou réelle)
     """
-    sample_size = data.shape[0]
     is_representative=None
     # Vérifier la taille de l'échantillon pour le test Z
     if sample_size >= 500:
@@ -316,7 +313,12 @@ def findRepresentativeSubSample(data,population_prop, alpha=0.05, max_iterations
             
             subsample_size = subsample.shape[0]
             # Vérifier la taille de l'échantillon pour le test Z
-            if subsample_size >= Taille_minimale and subsample_size<=Taille_maximale:
+            val0=int(subsample_size*sub_sample_prop)
+            val1=int(subsample_size*(1-sub_sample_prop))
+            cond1=val0>=5
+            cond2=val1>=5
+            estimated_sample_size=max(30,val0,val1)
+            if sample_size>=estimated_sample_size and cond1 and cond2:
                z_test_available = True
             else:
                z_test_available = False
@@ -376,60 +378,73 @@ def plot_binary_distribution_pie(data):
     plt.tight_layout()
     st.pyplot(fig)
 ##################################################################################
-# Initialiser l'état de la session pour le statut d'accès et le nombre de tentatives d'accès
+# Initialiser l'état de la session pour le statut d'accès 
 if 'logged_in' not in st.session_state:
     st.session_state.logged_in = False
 
 if st.session_state.logged_in:
-        # Le titre de la page et la description
-        st.title("Analyse de l'Echantillon Binaire")
+    # Le titre de la page et la description
+    st.title("Analyse de l'Echantillon Binaire")
 
-        st.sidebar.header("Paramètres")
-        data_choice = st.sidebar.selectbox("Source des données", ("Uploader un fichier", "Générer des données aléatoires"))
-        if data_choice == "Uploader un fichier":
-            uploaded_file = st.sidebar.file_uploader("Uploader un fichier Excel ou CSV contenant les données", type=["xlsx", "csv"])
-            if uploaded_file is not None:
-                if uploaded_file.name.endswith('.csv'):
-                    data = pd.read_csv(uploaded_file)
-                    
-                elif uploaded_file.name.endswith('.xlsx'):
-                    data = pd.read_excel(uploaded_file, engine='openpyxl')
-                else:
-                    st.error("Le format de fichier n'est pas pris en charge.")
-                    st.stop()
-
-        elif data_choice == "Générer des données aléatoires":
-            data_size = st.sidebar.number_input("Taille de l'échantillon", min_value=2000, max_value=50000, value=2000)
-            data=generate_binary_dataframe(data_size)
-
-        population_expected_mean = st.sidebar.number_input("Moyenne (proportion) attendue de la population (requis)", min_value=0.01, max_value=1.0, value=None)
-        alpha = st.sidebar.slider("Niveau de signification (alpha)", min_value=0.01, max_value=0.10, value=0.05, step=0.01)
-
-        if population_expected_mean and alpha: #and population_size :
-            check=validate_data()
-        button=st.sidebar.button('Analyser',key='AnalyserButton')
-        if button:
-            if check=='z_test':
-                df1,df2=z_test(population_expected_mean,alpha)
+    st.sidebar.header("Paramètres")
+    data_choice = st.sidebar.selectbox("Source des données", ("Uploader un fichier", "Générer des données aléatoires"))
+    if data_choice == "Uploader un fichier":
+        uploaded_file = st.sidebar.file_uploader("Uploader un fichier Excel ou CSV contenant les données", type=["xlsx", "csv"])
+        if uploaded_file is not None:
+            if uploaded_file.name.endswith('.csv'):
+                data = pd.read_csv(uploaded_file)
+            elif uploaded_file.name.endswith('.xlsx'):
+                data = pd.read_excel(uploaded_file, engine='openpyxl')
             else:
-                df1,df2=binomial_test_result(population_expected_mean,sample_prop=mean_sample,sample_size=sample_size,data=data,alpha=alpha)
-            st.write("Statistiques descriptives :")
-            st.table(df1)
-            st.write("Résultats du test d'hypothèse :")
-            st.table(df2)
-            plot_binary_distribution_pie(data)
+                st.error("Le format de fichier n'est pas pris en charge.")
+                st.stop()
 
-            if "❌" in df2['test_result'][0]:
-                verf,sub_sample_prop=findRepresentativeSubSample(data,population_expected_mean, alpha)
-                st.header('Conclusion générale')
-                if verf:
-                  st.write(f"L'extrapolation des résultats fournis par cet échantillon sur la population totale devrait être faite en se référant à la moyenne ou la proportion de sous-échantillon {round(sub_sample_prop,2)}, sous réserve de confirmation de la représentativité de l'échantillon à travers une analyse multidimensionnelle.")
-                else:
-                  st.write(f"L'extrapolation des résultats fournis par cet échantillon n'est pas possible.")
+    elif data_choice == "Générer des données aléatoires":
+        data_size = st.sidebar.number_input("Taille de l'échantillon", min_value=2000, max_value=50000, value=2000)
+        data=generate_binary_dataframe(data_size)
         
+    st.session_state.data0 = data
+    
+    population_expected_mean = st.sidebar.number_input("Moyenne (proportion) attendue de la population (requis)", min_value=0.01, max_value=1.0, value=None)
+    alpha = st.sidebar.slider("Niveau de signification (alpha)", min_value=0.01, max_value=0.10, value=0.05, step=0.01)
+    check=None
+    if population_expected_mean and alpha and data is not None:
+        check=validate_data()
+    else:
+        if data is None:
+            st.warning("Veuillez téléverser ou générer votre jeu de données.")
+            st.stop()
+        if not population_expected_mean:
+            st.warning("Veuillez saisir la moyenne (ou proportion) hypothétique de la population.")
+            st.stop()
+        
+    button=st.sidebar.button('Analyser',key='AnalyserButton')
+    if button:
+        if check=='ztest':
+            df1,df2=z_test(population_expected_mean,sample_prop=mean_sample,sample_size=sample_size,alpha=alpha)
+        else:
+            df1,df2=binomial_test_result(population_expected_mean,sample_prop=mean_sample,sample_size=sample_size,data=data,alpha=alpha)
+        
+        st.divider()
+        st.header("Résultats d'Analyse")
+        st.write("Statistiques descriptives :")
+        st.table(df1)
+        st.write("Résultats du test d'hypothèse :")
+        st.table(df2)
+        plot_binary_distribution_pie(data)
+
+        if "❌" in df2['test_result'][0]:
+            verf,sub_sample_prop=findRepresentativeSubSample(data,population_expected_mean, alpha)
+            st.header('Conclusion générale')
+            if verf:
+              st.write(f"L'extrapolation des résultats fournis par cet échantillon sur la population totale devrait être faite en se référant à la moyenne ou la proportion de sous-échantillon {round(sub_sample_prop,2)}, sous réserve de confirmation de la représentativité de l'échantillon à travers une analyse multidimensionnelle.")
             else:
-                st.header('Conclusion générale')
-                st.write(f"L'extrapolation des résultats fournis par cet échantillon sur la population totale devrait être faite en se référant à la moyenne de l'échantillon {round(mean_sample,2)}, sous réserve de confirmation de la représentativité de l'échantillon à travers une analyse multidimensionnelle.")
-                
+              st.write(f"L'extrapolation des résultats fournis par cet échantillon n'est pas possible.")
+    
+        else:
+            st.header('Conclusion générale')
+            st.write(f"L'extrapolation des résultats fournis par cet échantillon sur la population totale devrait être faite en se référant à la moyenne de l'échantillon {round(mean_sample,2)}, sous réserve de confirmation de la représentativité de l'échantillon à travers une analyse multidimensionnelle.")
+           
 else:
-        st.warning("⛔ Accès refusé. Veuillez vous assurer que vous validez votre accès.")
+    st.warning("⛔ Accès refusé. Veuillez vous assurer que vous validez votre accès.")
+

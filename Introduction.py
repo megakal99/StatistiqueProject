@@ -1,9 +1,6 @@
 import streamlit as st
 import os
-
-import os
 from dotenv import load_dotenv
-import streamlit as st
 ###############################################################
 # Obtenir le répertoire du script actuel
 current_directory = os.path.dirname(__file__)
@@ -11,7 +8,7 @@ current_directory = os.path.dirname(__file__)
 favicon_path = os.path.join(current_directory, 'static', 'Stats.png')
 
 st.set_page_config(
-    page_title="Validate Access",
+    page_title="Guide",
     page_icon=favicon_path,  
 )
 ################################################################
@@ -25,7 +22,7 @@ if 'tries' not in st.session_state:
 load_dotenv()
 
 # Récupérer la variable locale
-key = os.getenv('access_key', 'default_value')
+key = os.getenv('access_key')
 
 # Fonction pour valider la clé d'entrée de l'utilisateur
 def validate_key(input_key):
@@ -59,11 +56,6 @@ def login_modal():
                     st.error("Trop de tentatives d'accès. Veuillez contacter : [siham.ousaid@financeproadvisory.com].")
                     
 ##########################################
-# Initialiser l'état de la session pour le statut d'accès et le nombre de tentatives d'accès
-# if 'logged_in' not in st.session_state:
-#     st.session_state.logged_in = False
-    
-# if st.session_state.logged_in:
 def display_content():
         st.title("Guide et documentation de l'application 💡")
         st.header('Introduction')
@@ -194,12 +186,17 @@ def display_content():
                 
             ● Il est préférable d'utiliser un échantillon de taille supérieure à 500.
             
-            ● Si votre échantillon inclut une variable binaire cible qui résume ou regroupe toutes les autres variables, veuillez d'abord utiliser un test unidimensionnel binaire. Si ce test est validé (c'est-à-dire si l'hypothèse nulle ne peut pas être rejetée), appliquez ensuite une analyse multidimensionnelle.
+            ● Si votre échantillon comprend soit une variable binaire dépendante, soit une variable quantitative continue dépendante (variable dépendante, c'est-à-dire une variable dont la valeur est influencée ou déterminée par d'autres variables, ou qui représente l'ensemble des variables dans l'échantillon), commencez par l'analyse unidimensionnelle (l'analyse binaire ou l'analyse quantitative). Si ce test est validé (c'est-à-dire si l'hypothèse nulle ne peut pas être rejetée), passez ensuite à l'analyse multidimensionnelle pour obtenir des conclusions robustes et fiables sur la représentativité de l'échantillon.
             
-            ● Il est obligatoire de supprimer la variable (la colonne) qui est utilisée uniquement pour identifier l'observation (par exemple le numéro de dossier), avant de procéder à une analyse unidimensionnelle quantitative (cas d'une seule variable continue dans l'échantillon) ou à une analyse multidimensionnelle. En revanche, pour l'analyse binaire unidimensionnelle, la colonne d'identification doit être conservée et doit être la première colonne dans le jeu de données de l'échantillon.
+            ● Il est obligatoire de supprimer la variable (la colonne) qui est utilisée uniquement pour identifier l'observation (par exemple le numéro de dossier), avant de procéder à l'analyse unidimensionnelle quantitative (cas d'une seule variable continue dans l'échantillon) ou à l'analyse multidimensionnelle. En revanche, pour l'analyse binaire unidimensionnelle, la colonne d'identification doit être conservée et doit être la première colonne dans le jeu de données de l'échantillon.
 
-            ● Pour l'analyse multidimensionnelle, si une proportion importante de résultats indique que l'échantillon n'est pas représentatif de la population (par exemple, si plus de 5 % des résultats montrent un manque de représentativité significative), vous pouvez tester des sous-échantillons extraits aléatoirement de l'échantillon principal (jusqu'à 10 sous-échantillons, en fonction de la taille de l'échantillon). Parfois, un sous-échantillon peut être plus représentatif de la population cible.
+            ● Pour l'analyse multidimensionnelle, si une proportion importante de résultats indique que l'échantillon n'est pas représentatif de la population (par exemple, si plus de 5 % des résultats montrent un manque de représentativité significative), vous pouvez tester des sous-échantillons extraits aléatoirement de l'échantillon principal (par exemple jusqu'à 10 sous-échantillons, en fonction de la taille de l'échantillon). Parfois, un sous-échantillon peut être plus représentatif de la population cible.
+            
+            ● Les données restent sauvegardées temporairement dans la mémoire durant votre session d'utilisation, même si vous naviguez à différentes pages de l'application.
 
+            ● La permission d'accès et tous les jeux de données utilisés durant votre session d'utilisation seront totalement supprimés si vous réinitialisez votre session en rafraîchissant l'application (c'est-à-dire en actualisant l'une des pages) ou en supprimant l'historique de navigation.
+            
+            ● Chaque session d'utilisation est indépendante, sans partage de données entre les sessions.
             
             """)
         st.header('Conclusion')
@@ -209,8 +206,5 @@ def display_content():
             ● L'application simplifie l'évaluation de la représentativité de vos échantillons par rapport à une population. En suivant ces étapes et en comprenant les résultats, vous pouvez prendre des décisions éclairées fondées sur des analyses statistiques rigoureuses.
             """)
 
-
-# else:
-#         st.warning("⛔ Accès refusé. Veuillez vous assurer que vous validez votre accès.")
 # Exécuter la fonction d'accès pour afficher le formulaire de validation d'accès
 login_modal()

@@ -19,6 +19,12 @@ st.set_page_config(
 )
 
 ############################################
+# Initialiser l'état de la session pour les données
+if 'data1' not in st.session_state:
+    st.session_state.data1 = None
+
+data = st.session_state.data1
+
 # Initialiser l'état de la session pour le statut d'accès et le nombre de tentatives d'accès
 if 'logged_in' not in st.session_state:
     st.session_state.logged_in = False
@@ -26,6 +32,7 @@ if 'logged_in' not in st.session_state:
 if st.session_state.logged_in:
         def validateDataQuality():
             global data
+
             if data.shape[0]==1: 
                 data = data.T
             else:
@@ -139,10 +146,10 @@ if st.session_state.logged_in:
                 ) if p_value <= alpha else (
                 f"✅ On ne peut pas rejeter l'hypothèse nulle H0, qui suggère que notre échantillon ne diffère "
                 f"pas de manière significative de la population étudiée. Ainsi, nous ne pouvons pas conclure que "
-                f"la moyenne de l'échantillon est significativement différente de la moyenne de la population. "
-                f"Car le risque d'erreur de rejeter à tort l'hypothèse nulle (H0) est inacceptable. Le risque est de {round(p_value * 100, 2)}%.\n"        
+                f"la moyenne de l'échantillon est significativement différente de la moyenne de la population, "
+                f"le risque d'erreur de rejeter à tort l'hypothèse nulle (H0) étant supérieur au seuil du risque acceptable alpha ({round(p_value * 100, 2)}% > {round(alpha*100,2)}%). "        
                 f"En d'autres termes, l'échantillon reflète les principales caractéristiques dans la population, notamment la moyenne."
-                f" Il est nécessaire de le confirmer à l'aide de l'analyse multidimensionnelle si possible."
+                f" Il est toutefois nécessaire de le confirmer à l'aide de l'analyse multidimensionnelle si possible."
                 )
             else:
                 # Z-test
@@ -155,9 +162,9 @@ if st.session_state.logged_in:
                 f"✅ On ne peut pas rejeter l'hypothèse nulle H0, qui suggère que la moyenne de l'échantillon ne diffère "
                 f"pas de manière significative de celle de la population étudiée. Ainsi, nous ne pouvons pas conclure que "
                 f"la moyenne de l'échantillon est significativement différente de la moyenne de la population. "
-                f"Car le risque d'erreur de rejeter à tort l'hypothèse nulle (H0) est inacceptable. Le risque est de {round(p_value * 100, 2)}%.\n"        
+                f"le risque d'erreur de rejeter à tort l'hypothèse nulle (H0) étant supérieur au seuil du risque acceptable alpha ({round(p_value * 100, 2)}% > {round(alpha*100,2)}%). "        
                 f"En d'autres termes, l'échantillon reflète les principales caractéristiques dans la population, notamment la moyenne."
-                f" Il est nécessaire de le confirmer à l'aide de l'analyse multidimensionnelle si possible."
+                f" Il est toutefois nécessaire de le confirmer à l'aide de l'analyse multidimensionnelle si possible."
                 )
                 critical_value = stats.norm.ppf(1 - alpha / 2)
             # Construct result dictionary
@@ -203,7 +210,6 @@ if st.session_state.logged_in:
             st.pyplot(fig)
             # Tracer le graphique en boîte
             fig, ax = plt.subplots(figsize=(12, 6))
-            #plt.subplot(2, 2, 2)
             sns.boxplot(y=data)
             plt.title("Boîte à moustaches")
 
@@ -213,8 +219,6 @@ if st.session_state.logged_in:
 
         # Le titre de la page et la description
         st.title("Analyse de l'Echantillon")
-
-        data=None
         st.sidebar.header("Paramètres")
         data_choice = st.sidebar.selectbox("Source des données", ("Uploader un fichier", "Générer des données aléatoires"))
         if data_choice == "Uploader un fichier":
@@ -236,11 +240,18 @@ if st.session_state.logged_in:
             data_mean = st.sidebar.number_input("Moyenne des données aléatoires", value=50.0)
             data_std = st.sidebar.number_input("Écart type des données aléatoires", value=10.0)
             data = np.random.normal(loc=data_mean, scale=data_std, size=data_size)
-
+        
+        st.session_state.data1 = data
         expected_mean = st.sidebar.number_input("Moyenne attendue de la population (requis)", value=None)
         alpha = st.sidebar.slider("Niveau de signification (alpha)", min_value=0.01, max_value=0.10, value=0.05, step=0.01)
         population_std = st.sidebar.number_input("Écart type de la population (facultatif)", value=None)
-
+        
+        if data is None:
+            st.warning("Veuillez téléverser ou générer votre jeu de données.")
+            st.stop()
+        if not expected_mean:
+            st.warning("Veuillez saisir la moyenne hypothétique de la population.")
+            st.stop()
         button=st.sidebar.button('Analyser')
         if button:
             df1,df2=analyze_sample(data,expected_mean,alpha,population_std)
@@ -249,5 +260,11 @@ if st.session_state.logged_in:
             st.write("Résultats du test d'hypothèse :")
             st.table(df2)
             plot_distribution(data)
+            st.header('Conclusion générale')
+            if "❌" in df2['test_result'][0]:
+              st.write(f"L'extrapolation des résultats fournis par cet échantillon n'est pas possible.")
+            else:
+              st.write(f"L'extrapolation des résultats fournis par cet échantillon sur la population totale devrait être faite en se référant à la moyenne de l'échantillon {round(data.mean(),2)}, sous réserve de confirmation de la représentativité de l'échantillon à travers une analyse multidimensionnelle.")
+    
 else:
         st.warning("⛔ Accès refusé. Veuillez vous assurer que vous validez votre accès.")
