@@ -2,7 +2,7 @@
 FROM python:3.12-slim
 
 # Définir le répertoire de travail dans le conteneur
-WORKDIR /Sanalam_Stats_APP
+WORKDIR /ValidateSample_Stats_APP1
 
 # Copier le fichier de dépendances dans le conteneur
 COPY requirements.txt .
