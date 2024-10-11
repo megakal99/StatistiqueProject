@@ -236,7 +236,7 @@ if st.session_state.logged_in:
                 # Convert DataFrame to numpy array (assuming one-dimensional data)
                 data = data.iloc[:, 0].values
         elif data_choice == "Générer des données aléatoires":
-            data_size = st.sidebar.number_input("Taille de l'échantillon", min_value=10, max_value=50000, value=100)
+            data_size = st.sidebar.number_input("Taille de l'échantillon", min_value=30, max_value=50000, value=100)
             data_mean = st.sidebar.number_input("Moyenne des données aléatoires", value=50.0)
             data_std = st.sidebar.number_input("Écart type des données aléatoires", value=10.0)
             data = np.random.normal(loc=data_mean, scale=data_std, size=data_size)
